@@ -1,14 +1,15 @@
 import "reflect-metadata";
 
 import { Application } from "./application";
-import { ExpressApplication } from "./main/frameworks/express";
-import { MysqlConnection } from "./infra";
+import { ExpressServer } from "./infra/webserver/expres-server";
+import { MysqlConnection } from "./infra/db/mysql/connection";
 
 function bootstrap() {
-  const databaseConnection = new MysqlConnection();
-  const expressApplication = new ExpressApplication();
-  const app = new Application(databaseConnection, expressApplication);
-  app.listen(3200);
+  const framework = new ExpressServer();
+  const mysqlConnection = new MysqlConnection();
+
+  const app = new Application(framework, mysqlConnection);
+  app.listen(+process.env.NODE_PORT || 3200);
 }
 
 bootstrap();

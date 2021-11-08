@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  number8:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "3200:3200"
+    env_file: .env
+    command: npm run start:dev
+    depends_on:
+      db:
+        condition: service_started
+    networks:
+      - number8-network
+  db:
+    container_name: db
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: number8
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/:/docker-entrypoint-initdb.d
+      - dbmysql:/var/lib/mysql
+    networks:
+      - number8-network
+
+networks:
+  number8-network:
+    driver: bridge
+    name: number8-network
+
+volumes:
+  dbmysql:
+    driver: "local"
