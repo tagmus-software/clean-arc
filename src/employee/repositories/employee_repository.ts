@@ -1,6 +1,6 @@
-import { BaseRepository } from "../infra/db/mysql/repository";
-import { Employee } from "../infra/db/mysql/entities/employee/employee_entity";
-import { Injectable } from "../infra/core/decorators";
+import { BaseRepository } from "../../infra/db/mysql/repository";
+import { Employee } from "../../infra/db/mysql/entities/employee/employee_entity";
+import { Injectable } from "../../infra/core/decorators";
 import { createQueryBuilder } from "typeorm";
 
 @Injectable()

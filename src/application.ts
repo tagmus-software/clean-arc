@@ -1,6 +1,7 @@
 import { Container } from "./infra/core/container";
 import { Database } from "./infra/db/database";
 import { Server } from "./infra/webserver/server";
+import dependencies from "./infra/config/dependencies";
 export class Application {
   constructor(private server: Server, private database: Database<any>) {}
 
@@ -15,6 +16,6 @@ export class Application {
   }
 
   private registerDependencies() {
-    Container.register();
+    Container.register(dependencies);
   }
 }

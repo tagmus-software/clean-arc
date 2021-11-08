@@ -1,5 +1,3 @@
-import dependencies from "../config/dependencies";
-
 export type Provider = {
   provider: any;
   value: any;
@@ -7,7 +5,7 @@ export type Provider = {
 export class Container {
   private static dependencies: Array<Provider> = [];
 
-  public static register() {
+  public static register(dependencies) {
     this.dependencies = [...dependencies].map((dependency) => ({
       provider: dependency,
       value: null,

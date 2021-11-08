@@ -1,6 +1,6 @@
 import { CreateEmployeeDto } from "./dto/create_employee_dto";
 import { EmployeeFactory } from "../infra/factories/employee_factory";
-import { EmployeeRepository } from "./employee_repository";
+import { EmployeeRepository } from "./repositories/employee_repository";
 import { EmployeeTypeRepository } from "./repositories/employee_type_repository";
 import { Injectable } from "../infra/core/decorators";
 
