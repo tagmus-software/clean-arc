@@ -1,15 +1,22 @@
 import "reflect-metadata";
 
-import { Application } from "./application";
-import { ExpressServer } from "./infra/webserver/expres-server";
-import { MysqlConnection } from "./infra/db/mysql/connection";
+import { HttpApplication } from "./app/application";
+import { ExpressServer } from "./interfaces/http/server/expres-server";
+import { MysqlConnection } from "./infra/database/mysql/connection";
+import { LoggerManager } from "./infra/providers/logger.provider";
+
+import config from "./infra/config";
 
 function bootstrap() {
-  const framework = new ExpressServer();
+  const expressServer = new ExpressServer();
   const mysqlConnection = new MysqlConnection();
+  LoggerManager.init();
+  const app = new HttpApplication({
+    httpServer: expressServer,
+    databases: [mysqlConnection],
+  });
 
-  const app = new Application(framework, mysqlConnection);
-  app.listen(+process.env.NODE_PORT || 3200);
+  app.listen(config.application.PORT);
 }
 
 bootstrap();

@@ -32,7 +32,7 @@ export class NotFoundException extends ResponseException {
 
 export class BadRequestException extends ResponseException {
   public statusCode = HttpStatus.BAD_REQUEST;
-  constructor(msg = "The request is bad formed") {
+  constructor(msg = "The request is badly formed") {
     super(msg);
     this.statusCode = HttpStatus.BAD_REQUEST;
   }

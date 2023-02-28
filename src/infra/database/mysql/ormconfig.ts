@@ -1,14 +1,14 @@
 import { ConnectionOptions } from "typeorm";
-import env from "../../config/env";
+import config from "../../config";
 export = {
   synchronize: false,
   logging: false,
   type: "mysql",
-  port: env.mysql.DB_PORT,
-  host: env.mysql.DB_HOST,
-  database: env.mysql.DB_DATABASE,
-  username: env.mysql.DB_USERNAME,
-  password: env.mysql.DB_PASSWORD,
+  port: config.mysql.DB_PORT,
+  host: config.mysql.DB_HOST,
+  database: config.mysql.DB_DATABASE,
+  username: config.mysql.DB_USERNAME,
+  password: config.mysql.DB_PASSWORD,
   entities: [__dirname + "/entities/**/*_entity{.js,.ts}"],
   migrations: [
     __dirname + "/migrations/**/*{.js,.ts}",
