@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  number8:
+  back-end:
     build:
       context: ./
       dockerfile: docker/Dockerfile
@@ -14,7 +14,7 @@ services:
       db:
         condition: service_started
     networks:
-      - number8-network
+      - back-end
   db:
     container_name: db
     image: mysql
@@ -22,19 +22,18 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: number8
+      MYSQL_DATABASE: back-end-app
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
-      - ./docker/mysql/:/docker-entrypoint-initdb.d
       - dbmysql:/var/lib/mysql
     networks:
-      - number8-network
+      - back-end
 
 networks:
-  number8-network:
+  back-end:
     driver: bridge
-    name: number8-network
+    name: back-end
 
 volumes:
   dbmysql:

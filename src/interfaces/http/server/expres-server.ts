@@ -1,4 +1,4 @@
-import { HttpServer } from "./http-server";
+import { HttpServer } from "../http-server";
 import express from "express";
 
 export class ExpressServer implements HttpServer {

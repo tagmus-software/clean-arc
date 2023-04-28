@@ -1,59 +1,46 @@
-import PinoHttp, { HttpLogger } from "pino-http";
-
-type LoggerOptions = {
+export type LoggerOptions = {
   enabled?: boolean;
+  engine: "pinno" | "console";
+  pinnoOptions?: {};
 };
 
-type LoggerLibrary = {
-  info: (obj: unknown) => void;
-  error: (obj: unknown) => void;
-  warn: (obj: unknown) => void;
-  debug: (obj: unknown) => void;
-};
 export class Logger {
-  static #loggerLibrary: LoggerLibrary;
+  constructor(private loggerInstance: any) {}
 
-  public static set loggerLibrary(library) {
-    this.loggerLibrary = library;
+  public info(data: any) {
+    this.loggerInstance.info(data);
   }
-  public static get loggerLibrary(): LoggerLibrary {
-    const logger = {
-      info(obj: unknown) {
-        console.info(JSON.stringify(obj));
-      },
-      debug(obj: unknown) {
-        console.debug(JSON.stringify(obj));
-      },
-      warn(obj: unknown) {
-        console.warn(JSON.stringify(obj));
-      },
-      error(obj: unknown) {
-        console.error(JSON.stringify(obj));
-      },
-    };
-    return this.#loggerLibrary || logger;
+  public error(data: any) {
+    this.loggerInstance.error(data);
   }
-
-  public static info(obj: unknown) {
-    this.loggerLibrary.info(obj);
+  public warn(data: any) {
+    this.loggerInstance.warn(data);
   }
-  public static error(obj: unknown) {
-    this.loggerLibrary.error(obj);
-  }
-  public static warn(obj: unknown) {
-    this.loggerLibrary.warn(obj);
-  }
-  public static debug(obj: unknown) {
-    this.loggerLibrary.debug(obj);
+  public debug(data: any) {
+    this.loggerInstance.debug(data);
   }
 }
 
-export class LoggerManager {
-  public static init({ enabled }: LoggerOptions = {}) {
-    Logger.loggerLibrary = PinoHttp({
-      enabled,
-    }).logger;
+export let logger: Logger = new Logger({
+  debug() {},
+  info() {},
+  log() {},
+  warn() {},
+  error() {},
+});
 
-    return Logger;
+export async function buildLogger({ enabled, engine }: LoggerOptions) {
+  if (!enabled) {
+    return;
+  }
+
+  switch (engine) {
+    case "pinno":
+      const pinno = await import("pino");
+      logger = new Logger(pinno.pino());
+      break;
+    default:
+      logger = new Logger(console);
+      break;
   }
 }

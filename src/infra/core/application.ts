@@ -1,9 +1,20 @@
-import { HttpServer } from "../../interfaces/http/server/http-server";
+import { buildLogger, LoggerOptions } from "../providers/logger.provider";
 import { Database } from "../database/database";
-import { Logger } from "../providers/logger.provider";
 
 export interface ApplicationConfiguration {
-  httpServer: HttpServer;
-
   databases: Database<unknown>[];
+  logger?: LoggerOptions;
+}
+
+export class Application {
+  constructor(protected configuration: ApplicationConfiguration) {
+    this.setupLogger(this.configuration.logger);
+  }
+  public async listen(port: number): Promise<void> {}
+
+  private async setupLogger(
+    loggerOptions: LoggerOptions = { enabled: true, engine: "console" }
+  ) {
+    await buildLogger(loggerOptions);
+  }
 }
