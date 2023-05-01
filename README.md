@@ -43,7 +43,6 @@ Interface: it's for transaction data inside in and out of the application, insid
 --- consumers /** queue contracts normally consuming from some Rabbitmq, Kafka, or Sqs messages **/
 --- http /** all rest API interfaces **/
 --- jobs /** normally used for some daily task at a specific time, maybe charge some subscription **/
---- workers /** normally tasks we can do simultaneously with another process that cannot handle everything alone **/
 ```
 
 ## Setup and Install
