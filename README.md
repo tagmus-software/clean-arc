@@ -103,6 +103,8 @@ In case you prefer to use docker, there is a docker-compose file binding everyth
 docker compose up
 ```
 
+!!!Remember in case of using docker every command should be executed inside the container!!!
+
 ## Logging
 
 In case you need to visualize better your terminal output if you're using Pino as your logging tool just install [pino-pretty](https://github.com/pinojs/pino-pretty) with the following command:
