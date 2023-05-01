@@ -12,8 +12,8 @@ export const mylsqlDataSource = new DataSource({
     username: config.mysql().DB_USERNAME,
     password: config.mysql().DB_PASSWORD,
     entities: [
-        resolve(__dirname, "/entities/*{.js,.ts}"),
-        resolve(__dirname, "/entities/*.entity{.js,.ts}"),
+        resolve(__dirname, "entities/*{.js,.ts}"),
+        resolve(__dirname, "entities/*.entity{.js,.ts}"),
     ],
-    migrations: [resolve(__dirname, "/migrations/**/*{.js,.ts}")],
+    migrations: [resolve(__dirname, "migrations/**/*{.js,.ts}")],
 });
