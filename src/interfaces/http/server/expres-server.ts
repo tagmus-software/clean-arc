@@ -1,5 +1,5 @@
-import { HttpServer } from "../http-server";
 import express from "express";
+import { HttpServer } from "@interfaces/http/http-server";
 
 export class ExpressServer implements HttpServer {
   private express: express.Application;

@@ -1,8 +1,9 @@
+import { GenericError } from "../exceptions";
 import HttpStatus from "./status";
 
-export abstract class ResponseException extends Error {
-  public statusCode: HttpStatus;
-  constructor(msg) {
+export abstract class ResponseException extends GenericError {
+  public statusCode!: HttpStatus;
+  constructor(msg: any) {
     super(msg);
   }
 

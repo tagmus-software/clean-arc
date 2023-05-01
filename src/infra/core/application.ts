@@ -1,5 +1,5 @@
-import { buildLogger, LoggerOptions } from "../providers/logger.provider";
-import { Database } from "../database/database";
+import { buildLogger, LoggerOptions } from "@infra/providers/logger.provider";
+import { Database } from "@infra/database/database";
 
 export interface ApplicationConfiguration {
   databases: Database<unknown>[];

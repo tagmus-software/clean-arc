@@ -4,10 +4,6 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-ENV PORT=3000
-
-EXPOSE $PORT
-
 RUN npm i
 
 COPY . .

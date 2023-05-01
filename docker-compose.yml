@@ -2,8 +2,7 @@ version: "3.8"
 services:
   back-end:
     build:
-      context: ./
-      dockerfile: docker/Dockerfile
+      target: base
     volumes:
       - ./:/usr/src/app
     ports:

@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
     "target": "es2019",
-    "module": "nodenext",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "strict": true,
     "outDir": "dist/",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".", // This must be specified if "paths" is.
+    "paths": {
+      "@*": ["src/*"]
+    }
   },
   "exclude": ["node_modules", "./dist"],
   "include": ["src/**/*.ts"]
