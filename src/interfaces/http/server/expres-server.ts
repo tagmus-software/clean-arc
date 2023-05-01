@@ -2,6 +2,7 @@ import express from "express";
 import { HttpServer } from "../http-server";
 import appRouter from "../routes/app.route";
 import { loggerMiddleware } from "../middlewares/log.middleware";
+import { errorHandlerMiddleware } from "../middlewares/error-handler.middleware";
 
 export class ExpressServer implements HttpServer {
     private app: express.Application;
@@ -10,7 +11,9 @@ export class ExpressServer implements HttpServer {
         this.app = express();
         this.app.use(express.json());
         this.app.use(loggerMiddleware);
+
         this.routes();
+        this.app.use(errorHandlerMiddleware);
     }
 
     public async routes() {
