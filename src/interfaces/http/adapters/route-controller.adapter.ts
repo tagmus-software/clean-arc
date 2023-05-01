@@ -5,7 +5,6 @@ export function routeController(handler: RequestHandler) {
         try {
             await handler(req, res, next);
         } catch (error) {
-            console.log("dsadsa");
             next(error);
         }
     };
