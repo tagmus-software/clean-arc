@@ -1,3 +1,5 @@
+import { ExampleRepository } from "@app/repositories";
+
 export function helloWord() {
-  return "Hello World";
+  return ExampleRepository.getAll();
 }

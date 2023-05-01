@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "ES2018",
+    "lib": ["es5", "es6", "dom"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
@@ -12,7 +13,8 @@
     "baseUrl": ".", // This must be specified if "paths" is.
     "paths": {
       "@*": ["src/*"]
-    }
+    },
+    "strictPropertyInitialization": false
   },
   "exclude": ["node_modules", "./dist"],
   "include": ["src/**/*.ts"]

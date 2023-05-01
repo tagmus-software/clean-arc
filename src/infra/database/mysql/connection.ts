@@ -4,6 +4,8 @@ import { mylsqlDataSource } from "./ormconfig";
 
 export class MysqlConnection implements Database<DataSource> {
   async connect() {
-    return mylsqlDataSource.initialize();
+    return mylsqlDataSource.initialize().then((c) => {
+      return c;
+    });
   }
 }
