@@ -30,18 +30,18 @@ app: for all the business logic and database formatting queries to support busin
 infra: everything needed to build the project structure and architecture related, errors exceptions, config environments, database modeling with entities or migrations, providers such as Redis or logs implementation, core and common functionalities inside the project. Follow the structure explained in detail:
 
 ```bash
---- common // for everything generic that interacts with interfaces, errors exceptions, business unrelated constants.
---- config // env variables
---- core // functionalities needed to run the project such as adapters, applications bootstraps
---- database // connections, migrations, entities, and seeders
---- providers // redis, logs and rabbitmq(services and connections)
+--- common  /** for everything generic that interacts with interfaces, errors exceptions, business unrelated constants. **/
+--- config  /** env variables **/
+--- core  /** functionalities needed to run the project such as adapters, applications bootstraps **/
+--- database  /** connections, migrations, entities, and seeders **/
+--- providers  /** redis, logs and rabbitmq(services and connections) **/
 ```
 
 Interface: it's for transaction data inside in and out of the application, inside the directory we're gonna have jobs, workers, consumers, HTTP api and extra cases if needed. Follow the structure explained in detail:
 
-```
+```bash
 --- consumers /** queue contracts normally consuming from some Rabbitmq, Kafka, or Sqs messages **/
---- HTTP /** all rest API interfaces **/
+--- http /** all rest API interfaces **/
 --- jobs /** normally used for some daily task at a specific time, maybe charge some subscription **/
 --- workers /** normally tasks we can do simultaneously with another process that cannot handle everything alone **/
 ```

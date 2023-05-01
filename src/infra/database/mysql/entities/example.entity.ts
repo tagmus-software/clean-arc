@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity({
-  name: "example",
+    name: "example",
 })
 export class Example {
   @PrimaryGeneratedColumn()
-  id: number;
+      id: number;
 
   @Column({ type: "varchar" })
-  name: string;
+      name: string;
 }

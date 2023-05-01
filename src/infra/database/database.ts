@@ -1,3 +1,3 @@
 export interface Database<T> {
-  connect(): Promise<T>;
+    connect(): Promise<T>;
 }

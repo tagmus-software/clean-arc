@@ -1,3 +1,4 @@
 import { DataSource } from "typeorm";
 
-export async function run(dataSource: DataSource) {}
+// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+export async function run(_dataSource: DataSource) {}

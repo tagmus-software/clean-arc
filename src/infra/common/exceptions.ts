@@ -1,5 +1,6 @@
 export class GenericError extends Error {
-  constructor(msg: any) {
-    super(msg);
-  }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    constructor(msg: any) {
+        super(msg);
+    }
 }

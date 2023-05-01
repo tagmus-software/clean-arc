@@ -7,12 +7,12 @@ export type HttpApplicationConfiguration = {
 } & ApplicationConfiguration;
 
 export class HttpApplication extends Application {
-  constructor(protected configuration: HttpApplicationConfiguration) {
-    super(configuration);
-  }
-  public async listen(port: number) {
-    this.configuration.httpServer.listen(port).then(() => {
-      logger.info(`Http Application started on localhost:${port}`);
-    });
-  }
+    constructor(protected configuration: HttpApplicationConfiguration) {
+        super(configuration);
+    }
+    public async listen(port: number) {
+        this.configuration.httpServer.listen(port).then(() => {
+            logger.info(`Http Application started on localhost:${port}`);
+        });
+    }
 }
