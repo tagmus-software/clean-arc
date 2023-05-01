@@ -27,7 +27,7 @@ infra: it's everything needed to build the project structure and arquitecture re
 
 --- common // for everything generic that interacts with interfaces, errors execeptions, business unrelated constants.
 --- config // env variables
---- core // functionalities needed to run the project
+--- core // functionalities needed to run the project such as adapters, applications bootstraps
 --- database // connections, migrations, entities and seeders
 --- providers // redis, logs and rabbitmq(services and connections)
 
@@ -93,4 +93,28 @@ In case you're prefer to use docker, there is a docker-compose file binding ever
 
 ```bash
 docker compose up
+```
+
+## Logging
+
+In case you need to visualize better your terminal output if you're using pino as your logging tool just install [pino-pretty](https://github.com/pinojs/pino-pretty) with the following command:
+
+```bash
+npm install --save-dev pino-pretty
+```
+
+and then in the `src/main.ts` file you edit the line creating your application with the following configuration for pretty log
+
+```typescript
+  const app = await ApplicationFactory.createHttpApplication({
+    logger: {
+      engine: "pino",
+      pinoOptions: {
+        transport: {
+          target: "pino-pretty", // this will load pino pretty
+        },
+      },
+    },
+    ...
+  })
 ```

@@ -1,23 +1,23 @@
 export type LoggerOptions = {
   enabled?: boolean;
-  engine: "pinno" | "console";
-  pinnoOptions?: {};
+  engine?: "pino" | "console";
+  pinoOptions?: {};
 };
 
 export class Logger {
   constructor(private loggerInstance: any) {}
 
-  public info(data: any) {
-    this.loggerInstance.info(data);
+  public info(data: any, msg?: string) {
+    this.loggerInstance.info(data, msg);
   }
-  public error(data: any) {
-    this.loggerInstance.error(data);
+  public error(data: any, msg?: string) {
+    this.loggerInstance.error(data, msg);
   }
-  public warn(data: any) {
-    this.loggerInstance.warn(data);
+  public warn(data: any, msg?: string) {
+    this.loggerInstance.warn(data, msg);
   }
-  public debug(data: any) {
-    this.loggerInstance.debug(data);
+  public debug(data: any, msg?: string) {
+    this.loggerInstance.debug(data, msg);
   }
 }
 
@@ -29,15 +29,18 @@ export let logger: Logger = new Logger({
   error() {},
 });
 
-export async function buildLogger({ enabled, engine }: LoggerOptions) {
+export async function buildLogger({
+  enabled,
+  engine,
+  pinoOptions,
+}: LoggerOptions) {
   if (!enabled) {
     return;
   }
-
   switch (engine) {
-    case "pinno":
-      const pinno = await import("pino");
-      logger = new Logger(pinno.pino());
+    case "pino":
+      const pino = await import("pino");
+      logger = new Logger(pino.pino(pinoOptions));
       break;
     default:
       logger = new Logger(console);

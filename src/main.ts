@@ -1,19 +1,30 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import "reflect-metadata";
 
 import { ExpressServer } from "@interfaces/http/server/expres-server";
 import { MysqlConnection } from "@infra/database/mysql/connection";
-import { HttpApplication } from "@infra/core/http-application";
 import config from "@infra/config";
+import { ApplicationFactory } from "@infra/core/application.factory";
+import { env } from "process";
 
-function bootstrap() {
+async function bootstrap() {
   const expressServer = new ExpressServer();
   const mysqlConnection = new MysqlConnection();
-  const app = new HttpApplication({
+
+  const app = await ApplicationFactory.createHttpApplication({
     httpServer: expressServer,
     databases: [mysqlConnection],
+    logger: {
+      engine: "pino",
+      pinoOptions: {
+        transport: {
+          target: "pino-pretty",
+        },
+      },
+    },
   });
-
-  app.listen(config.application.PORT);
+  app.listen(config.application().PORT);
 }
 
 bootstrap();

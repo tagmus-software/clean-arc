@@ -3,3 +3,4 @@ import { AppController } from "../controllers";
 
 const appRouter = express.Router();
 appRouter.get("/", AppController.get);
+export default appRouter;

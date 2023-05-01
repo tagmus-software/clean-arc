@@ -1,7 +1,7 @@
+import { AppService } from "@app/services";
 import { Request, Response } from "express";
 
 export function get(req: Request, res: Response) {
-  res.json({
-    hello: "World",
-  });
+  const data = AppService.helloWord();
+  res.json(data);
 }

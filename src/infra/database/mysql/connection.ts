@@ -1,12 +1,9 @@
-import { Connection, createConnection } from "typeorm";
-
+import { DataSource } from "typeorm";
 import { Database } from "../database";
-import ormconfig from "./ormconfig";
+import { mylsqlDataSource } from "./ormconfig";
 
-export class MysqlConnection implements Database<Connection> {
+export class MysqlConnection implements Database<DataSource> {
   async connect() {
-    const conn = await createConnection(ormconfig);
-
-    return conn;
+    return mylsqlDataSource.initialize();
   }
 }
