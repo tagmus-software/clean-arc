@@ -1,7 +1,13 @@
-import { AppService } from "@app/services";
-import { NextFunction, Request, Response } from "express";
+import { NotFoundException } from "@infra/common/http";
+import { Request, Response } from "express";
 
 export async function get(req: Request, res: Response) {
-    const data = AppService.helloWord();
+    const data = "Hello world";
     res.json(data);
+}
+
+export async function errorHandlingExample(req: Request, res: Response) {
+    throw new NotFoundException("This is an error handled example");
+
+    res.json();
 }

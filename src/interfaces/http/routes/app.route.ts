@@ -4,5 +4,6 @@ import { routeController } from "../adapters/route-controller.adapter";
 
 const appRouter = express.Router();
 appRouter.get("/", routeController(AppController.get));
+appRouter.get("/error", routeController(AppController.errorHandlingExample));
 
 export default appRouter;

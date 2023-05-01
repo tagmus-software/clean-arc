@@ -80,6 +80,8 @@ If you're here I'll guess everything went great and you only need to get the pro
 npm start:dev
 ```
 
+after your application started you should check if the localhost:3000 or localhost:3200 receive the response "hello world"
+
 #### Production
 
 It would be the following commands
