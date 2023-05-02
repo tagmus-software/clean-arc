@@ -1,5 +1,5 @@
 import { GenericError } from "../exceptions";
-import HttpStatus from "./status";
+import { HttpStatus } from "./status";
 
 export abstract class ResponseException extends GenericError {
     constructor(

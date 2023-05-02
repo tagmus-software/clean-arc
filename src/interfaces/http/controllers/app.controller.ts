@@ -1,13 +1,25 @@
-import { NotFoundException } from "@infra/common/http";
-import { Request, Response } from "express";
+import { AppRequest, HttpStatus, NotFoundException } from "@infra/common/http";
 
-export async function get(req: Request, res: Response) {
+export async function get(appRequest: AppRequest) {
     const data = "Hello world";
-    res.json(data);
+    return data;
 }
 
-export async function errorHandlingExample(req: Request, res: Response) {
-    throw new NotFoundException("This is an error handled example");
+export async function put({ body }: AppRequest) {
+    const data = "Hello world";
+    return {
+        body: data,
+        status: HttpStatus.OK,
+    };
+}
 
-    res.json();
+export async function post({ body }: AppRequest) {
+    const data = "Hello world";
+    return new Response(data, {
+        status: HttpStatus.CREATED,
+    });
+}
+
+export async function errorHandlingExample({ body }: AppRequest) {
+    throw new NotFoundException();
 }

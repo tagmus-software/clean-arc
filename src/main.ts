@@ -1,11 +1,8 @@
 import "reflect-metadata";
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import { ExpressServer } from "@interfaces/http/server/expres-server";
 import { MysqlConnection } from "@infra/database/mysql/connection";
-import config from "@infra/config";
 import { ApplicationFactory } from "@infra/core/application.factory";
+import config from "@infra/config";
 
 async function bootstrap() {
     const expressServer = new ExpressServer();
