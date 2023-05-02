@@ -14,7 +14,7 @@ This is a back-end clean architecture project designed with the following techno
 -   [Setup and Install](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#setup-and-install)
 -   [Logging Configuration](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#logging)
 -   [Migration, Seeders, and Database related stuff](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#database)
--   [HTTP Application documentation](https://github.com/kevingamaa/typescript-backend-example/tree/main/src/interfaces/http)
+-   [HTTP Application documentation Routes/Controller/Error Handling](https://github.com/kevingamaa/typescript-backend-example/tree/main/src/interfaces/http)
 
 ##### Directory structure
 
