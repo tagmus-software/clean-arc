@@ -56,7 +56,15 @@ Interface: it's for transaction data inside in and out of the application, insid
 
 Steps to setup everything is simple 4 steps to do, follow the steps below:
 
-##### 1º - Environment
+##### 1º - Git Clone
+
+In your terminal go in the directory where you want to clone the project
+
+```bash
+git clone https://github.com/kevingamaa/typescript-backend-example.git
+```
+
+##### 2º - Environment
 
 you will notice that we have the `.env.example` file in the root directory, create another file named `.env`, and copy and paste the content from `env.example` in your `.env` file. It's something like this.
 
@@ -71,7 +79,7 @@ MYSQL_USERNAME='root'
 MYSQL_PASSWORD='example'
 ```
 
-##### 2º - Dependencies
+##### 3º - Dependencies
 
 The project is decoupled from any third parties libraries, so if you decide to work with another logging library or database ORM the choice is up to you, in case yes go ahead and adjust the dependencies and create the adapters for whatever you integrating with. In the meanwhile, we're working with [typeorm](https://typeorm.io/) as our ORM, [express](https://expressjs.com/pt-br/) to provide an HTTP interface and [pinno](https://github.com/pinojs/pino) for logging. Finally to install everything you run:
 
@@ -79,7 +87,7 @@ The project is decoupled from any third parties libraries, so if you decide to w
 npm install
 ```
 
-##### 3º - Build and Running
+##### 4º - Build and Running
 
 If you're here I'll guess everything went great and you only need to get the project running for that go ahead and run the script below in your terminal:
 
@@ -88,6 +96,8 @@ npm start:dev
 ```
 
 after your application started you should check if the localhost:3000 or localhost:3200 receive the response "hello world"
+
+---
 
 #### Production
 
@@ -102,6 +112,8 @@ and then
 ```bash
 npm start
 ```
+
+---
 
 #### docker setup
 
