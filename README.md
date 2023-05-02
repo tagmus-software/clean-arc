@@ -153,3 +153,7 @@ and for downgrading the migration would be:
 ```bash
 npm run typeorm:migration:down
 ```
+
+#### DOCS
+
+[HTTP Application documentation](https://github.com/kevingamaa/typescript-backend-example/tree/main/src/interfaces/http)
