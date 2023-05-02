@@ -9,6 +9,13 @@ This is a back-end clean architecture project designed with the following techno
   # version 4.4.+
 ```
 
+## Summary
+
+-   [Setup and Install](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#setup-and-install)
+-   [Logging Configuration](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#logging)
+-   [Migration, Seeders, and Database related stuff](https://github.com/kevingamaa/typescript-backend-example/blob/main/README.md#database)
+-   [HTTP Application documentation](https://github.com/kevingamaa/typescript-backend-example/tree/main/src/interfaces/http)
+
 ##### Directory structure
 
 ```bash
@@ -153,7 +160,3 @@ and for downgrading the migration would be:
 ```bash
 npm run typeorm:migration:down
 ```
-
-#### DOCS
-
-[HTTP Application documentation](https://github.com/kevingamaa/typescript-backend-example/tree/main/src/interfaces/http)
