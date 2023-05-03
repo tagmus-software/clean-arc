@@ -1,7 +1,9 @@
+import { logger } from "@infra/providers/logger.provider";
 import { Application, ApplicationConfiguration } from "./application";
+import { ConsumerHandler } from "@infra/common/consumers";
 
 export type MicroserviceConfiguration = {
-    consumers: (() => void)[];
+    consumers: Record<string, ConsumerHandler>;
 } & ApplicationConfiguration;
 
 export class MicroserviceApplication extends Application {
@@ -11,7 +13,10 @@ export class MicroserviceApplication extends Application {
 
     public async listen() {
         Object.entries(this.configuration.consumers).forEach(
-            ([key, callback]) => callback()
+            ([key, callback]) => {
+                logger.info(`Starting the ${key}-consumer`);
+                callback();
+            }
         );
     }
 }

@@ -1,26 +1,18 @@
 import "reflect-metadata";
-import { ExpressServer } from "@interfaces/http/server/expres-server";
 import { MysqlConnection } from "@infra/database/mysql/connection";
 import { ApplicationFactory } from "@infra/core/application.factory";
-import config from "@infra/config";
+import { CONSUMERS } from "@interfaces/consumer";
 
 async function bootstrap() {
-    const expressServer = new ExpressServer();
     const mysqlConnection = new MysqlConnection();
 
-    const app = await ApplicationFactory.createHttpApplication({
-        httpServer: expressServer,
-        databases: [mysqlConnection],
-        logger: {
-            engine: "pino",
-            pinoOptions: {
-                transport: {
-                    target: "pino-pretty",
-                },
-            },
-        },
-    });
-    app.listen(config.application().PORT);
+    const microservice = await ApplicationFactory.createMicroserviceApplication(
+        {
+            databases: [mysqlConnection],
+            consumers: CONSUMERS,
+        }
+    );
+    microservice.listen();
 }
 
 bootstrap();

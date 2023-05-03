@@ -11,12 +11,13 @@ Http Interface is implemented when we create a http application with the applica
 ## Setup example
 
 ```typescript
+import "reflect-metadata";
 import { ExpressServer } from "@interfaces/http/server/expres-server";
 import { MysqlConnection } from "@infra/database/mysql/connection";
 import { ApplicationFactory } from "@infra/core/application.factory";
 import config from "@infra/config";
 
-async function main() {
+async function bootstrap() {
     const expressServer = new ExpressServer();
     const mysqlConnection = new MysqlConnection();
 
@@ -35,7 +36,7 @@ async function main() {
     });
     app.listen(config.application().PORT);
 }
-main();
+bootstrap();
 ```
 
 ## Route/Controller declaration

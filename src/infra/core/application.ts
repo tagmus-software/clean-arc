@@ -13,23 +13,11 @@ export interface ApplicationConfiguration {
 export abstract class Application {
     constructor(protected configuration: ApplicationConfiguration) {}
 
-    public async initDatabasesConnection(
+    public async setupDatabase(
         databases: ApplicationConfiguration["databases"]
     ) {
         if (databases && databases.length) {
-            const promises = databases.map(async (d) => {
-                try {
-                    await d.connect();
-                    logger.info(`${d.constructor.name} connection established`);
-                } catch (error) {
-                    logger.error(
-                        error,
-                        `Error trying to establish database connection`
-                    );
-                }
-            });
-
-            await Promise.all(promises);
+            await Promise.all(this.initDatabasesConnection(databases));
         }
     }
 
@@ -42,4 +30,20 @@ export abstract class Application {
     }
 
     abstract listen(port?: number): Promise<void>;
+
+    private initDatabasesConnection(
+        databases: ApplicationConfiguration["databases"]
+    ) {
+        return databases.map(async (d) => {
+            try {
+                await d.connect();
+                logger.info(`${d.constructor.name} connection established`);
+            } catch (error) {
+                logger.error(
+                    error,
+                    `Error trying to establish database connection`
+                );
+            }
+        });
+    }
 }
