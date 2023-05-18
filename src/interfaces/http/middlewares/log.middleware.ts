@@ -1,4 +1,4 @@
-import { logger } from "@infra/providers/logger.provider";
+import { logger } from "@infra/providers/logger";
 import { NextFunction, Request, Response } from "express";
 
 export const loggerMiddleware = (

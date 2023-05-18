@@ -1,35 +1,37 @@
 import { HttpStatus, RequestHandler } from "@infra/common/http";
+import { AppResponse } from "@infra/common/http/response";
 import { Request, Response as ExpressResponse, NextFunction } from "express";
 
+function isResponseStringOrPlainObject(
+    response: AppResponse | object | string
+) {
+    return (
+        !(response instanceof AppResponse) ||
+        !("body" in response && "status" in response)
+    );
+}
 export function routeController(handler: RequestHandler) {
     return async (req: Request, res: ExpressResponse, next: NextFunction) => {
         try {
             let response = await handler({
                 body: req.body,
                 query: req.query,
-                headers: req.headers,
+                headers: req.headers as any,
                 params: req.params,
                 url: req.url,
             });
-            if (
-                !(response instanceof Response) ||
-                !("body" in response && "status" in response)
-            ) {
-                response = new Response(response, {
+
+            if (isResponseStringOrPlainObject(response)) {
+                response = new AppResponse({
                     status: HttpStatus.OK,
+                    body: response,
                 });
             }
 
             if (response.headers) {
-                if (response.headers instanceof Headers) {
-                    (response.headers as Headers).forEach((value, key) =>
-                        res.setHeader(key, value)
-                    );
-                } else {
-                    Object.entries<string>(response.header).forEach(
-                        ([key, value]) => res.setHeader(key, value)
-                    );
-                }
+                Object.entries<string>(response.header).forEach(
+                    ([key, value]) => res.setHeader(key, value)
+                );
             }
             res.status(response.status).json(response.body);
         } catch (error) {

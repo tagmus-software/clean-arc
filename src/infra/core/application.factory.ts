@@ -2,6 +2,7 @@ import {
     HttpApplication,
     HttpApplicationConfiguration,
 } from "./http-application";
+
 import {
     MicroserviceApplication,
     MicroserviceConfiguration,
@@ -21,8 +22,11 @@ export class ApplicationFactory {
         configuration: MicroserviceConfiguration
     ) {
         const microservice = new MicroserviceApplication(configuration);
+
         await microservice.setupLogger(configuration.logger || {});
+
         await microservice.setupDatabase(configuration.databases);
+
         return microservice;
     }
 }

@@ -1,22 +1,19 @@
-import { logger } from "@infra/providers/logger.provider";
 import { Application, ApplicationConfiguration } from "./application";
-import { ConsumerHandler } from "@infra/common/consumers";
+import { Transport } from "@infra/common/microservices";
 
-export type MicroserviceConfiguration = {
-    consumers: Record<string, ConsumerHandler>;
-} & ApplicationConfiguration;
+export type MicroserviceConfiguration = ApplicationConfiguration;
 
 export class MicroserviceApplication extends Application {
+    private transport: Transport;
     constructor(protected configuration: MicroserviceConfiguration) {
         super(configuration);
     }
 
+    public async setTransport(transport: Transport) {
+        this.transport = transport;
+    }
     public async listen() {
-        Object.entries(this.configuration.consumers).forEach(
-            ([key, callback]) => {
-                logger.info(`Starting the ${key}-consumer`);
-                callback();
-            }
-        );
+        await this.transport.connect();
+        this.transport.listen();
     }
 }

@@ -22,7 +22,7 @@ services:
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: "example"
-            MYSQL_DATABASE: back-end
+            MYSQL_DATABASE: app
         ports:
             - 3307:3306
         volumes:

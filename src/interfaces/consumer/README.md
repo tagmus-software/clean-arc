@@ -29,4 +29,12 @@ async function bootstrap() {
 bootstrap();
 ```
 
+Since for this example we're using RabbitMQ for our queue service, we have a ready implementation of it
+then you install the [amqplib]() and [@types/amqp]()
+
+```bash
+npm i --save amqplib
+npm i --save-dev @types/amqplib
+```
+
 ## Declaring Consumer

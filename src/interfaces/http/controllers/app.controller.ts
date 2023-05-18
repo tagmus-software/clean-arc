@@ -1,11 +1,12 @@
 import { AppRequest, HttpStatus, NotFoundException } from "@infra/common/http";
+import { AppResponse } from "@infra/common/http/response";
 
 export async function get(appRequest: AppRequest) {
     const data = "Hello world";
     return data;
 }
 
-export async function put({ body }: AppRequest) {
+export async function put({ body }: AppRequest): Promise<AppResponse> {
     const data = "Hello world";
     return {
         body: data,
@@ -15,7 +16,8 @@ export async function put({ body }: AppRequest) {
 
 export async function post({ body }: AppRequest) {
     const data = "Hello world";
-    return new Response(data, {
+    return new AppResponse({
+        body: data,
         status: HttpStatus.CREATED,
     });
 }

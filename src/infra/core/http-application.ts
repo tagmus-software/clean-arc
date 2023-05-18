@@ -1,9 +1,9 @@
+import { logger } from "@infra/providers/logger";
 import { HttpServer } from "../../interfaces/http/http-server";
-import { logger } from "../providers/logger.provider";
 import { Application, ApplicationConfiguration } from "./application";
 
 export type HttpApplicationConfiguration = {
-  httpServer: HttpServer;
+    httpServer: HttpServer;
 } & ApplicationConfiguration;
 
 export class HttpApplication extends Application {
