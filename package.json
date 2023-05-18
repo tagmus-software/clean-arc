@@ -1,7 +1,7 @@
 {
-    "name": "typescript-backend-example",
+    "name": "clean-arc",
     "version": "1.0.0",
-    "description": "",
+    "description": "A simple clean architecture framework, letting possible to code in the simplest way and letting all the code explicit",
     "main": "src/main.ts",
     "scripts": {
         "start:dev": "tsx watch src/main.ts",
@@ -13,8 +13,19 @@
         "typeorm:migration:down": "typeorm-ts-node-commonjs migration:revert -d ./src/infra/database/mysql/ormconfig.ts",
         "typeorm:seed": "tsx src/infra/database/mysql/seeders/index.ts"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": [
+        "clean-arc",
+        "clean-arch",
+        "clean architecture",
+        "clean architecture framework",
+        "simple node framework",
+        "clean architecture express"
+    ],
+    "author": "Kevin Ferreira  <Linkedin> (https://www.linkedin.com/in/kevin-ferreira-048811165/)",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tagmus-software/clean-arc"
+    },
     "license": "ISC",
     "dependencies": {
         "amqplib": "^0.10.3",
@@ -34,6 +45,7 @@
         "@typescript-eslint/parser": "^5.59.2",
         "eslint": "^8.39.0",
         "eslint-config-prettier": "^8.8.0",
+        "jest": "^29.5.0",
         "pino-pretty": "^10.0.0",
         "ts-node": "^10.9.1",
         "tsx": "^3.12.3",

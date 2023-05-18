@@ -25,6 +25,10 @@ export abstract class Application {
         await buildLogger(loggerOptions);
     }
 
+    public setupControllers() {
+        logger.info("EMPTY setup");
+    }
+
     abstract listen(port?: number): Promise<void>;
 
     private initDatabasesConnection(
