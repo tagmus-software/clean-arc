@@ -1,21 +1,23 @@
 {
-  "compilerOptions": {
-    "target": "ES2018",
-    "lib": ["es5", "es6", "dom"],
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "strict": true,
-    "outDir": "dist/",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "baseUrl": ".", // This must be specified if "paths" is.
-    "paths": {
-      "@*": ["src/*"]
+    "compilerOptions": {
+        "target": "ES2018",
+        "lib": ["es5", "es6", "dom"],
+        "resolveJsonModule": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "declaration": true,
+        "strict": true,
+        "outDir": "dist/",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "skipLibCheck": true,
+        "baseUrl": ".", // This must be specified if "paths" is.
+        "paths": {
+            "@clean-arc/*": ["packages/*"]
+        },
+        "strictPropertyInitialization": false
     },
-    "strictPropertyInitialization": false
-  },
-  "exclude": ["node_modules", "./dist"],
-  "include": ["src/**/*.ts"]
+    "exclude": ["node_modules", "./dist"],
+    "include": ["packages/**/*.ts", "packages/**/*.json"]
 }

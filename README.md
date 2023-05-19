@@ -25,33 +25,6 @@ This is a back-end clean architecture project designed with the following techno
 ---- interfaces/
 ```
 
-###### The first path level is split into three different directories
-
-app: for all the business logic and database formatting queries to support business and then inside this folder, you will find the following structure:
-
-```bash
---- repositories/ /** This path is explicit for database communication **/
---- services/  /** this path is explicit for business rules **/
-```
-
-infra: everything needed to build the project structure and architecture related, errors exceptions, config environments, database modeling with entities or migrations, providers such as Redis or logs implementation, core and common functionalities inside the project. Follow the structure explained in detail:
-
-```bash
---- common  /** for everything generic that interacts with interfaces, errors exceptions, business unrelated constants. **/
---- config  /** env variables **/
---- core  /** functionalities needed to run the project such as adapters, applications bootstraps **/
---- database  /** connections, migrations, entities, and seeders **/
---- providers  /** redis, logs and rabbitmq(services and connections) **/
-```
-
-Interface: it's for transaction data inside in and out of the application, inside the directory we're gonna have jobs, workers, consumers, HTTP api and extra cases if needed. Follow the structure explained in detail:
-
-```bash
---- consumers /** queue contracts normally consuming from some Rabbitmq, Kafka, or Sqs messages **/
---- http /** all rest API interfaces **/
---- jobs /** normally used for some daily task at a specific time, maybe charge some subscription **/
-```
-
 ## Setup and Install
 
 Steps to setup everything is simple 4 steps to do, follow the steps below:
@@ -152,23 +125,3 @@ and then in the `src/main.ts` file, you edit the line creating your application 
 ## Database
 
 The following commands for database connection was implemented with [typeorm](https://typeorm.io/), if you feel that you should be using a different ORM go ahead and change, but would be necessary to config the CLI for your setup.
-
-#### Migration
-
-To create migrations you have to run the command specifying the database location you want to create the migration, follow the example below:
-
-```bash
-npm run typeorm:migration:create src/infra/database/mysql/migrations/example
-```
-
-for running the migration you can use the following:
-
-```bash
-npm run typeorm:migration:up
-```
-
-and for downgrading the migration would be:
-
-```bash
-npm run typeorm:migration:down
-```

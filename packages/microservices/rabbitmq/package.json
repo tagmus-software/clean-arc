@@ -1,0 +1,23 @@
+{
+    "name": "@clean-arc/rabbitmq",
+    "version": "1.0.3",
+    "description": "RabbitMQ Integration for the framework @clean-arc",
+    "scripts": {
+        "test": "npm test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tagmus-software/clean-arc.git#main"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/tagmus-software/clean-arc/issues"
+    },
+    "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
+    "peerDependencies": {
+        "amqplib": "^0.10.3",
+        "@clean-arc/common": "1.x.x",
+        "@clean-arc/core": "1.x.x"
+    }
+}
