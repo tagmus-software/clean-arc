@@ -12,12 +12,18 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "skipLibCheck": true,
-        "baseUrl": ".", // This must be specified if "paths" is.
+        "baseUrl": ".",
         "paths": {
             "@clean-arc/*": ["packages/*"]
         },
         "strictPropertyInitialization": false
     },
-    "exclude": ["node_modules", "./dist"],
+    "exclude": [
+        "node_modules",
+        "./dist",
+        "./**/__mocks__",
+        "./**/tests",
+        "./**/test"
+    ],
     "include": ["packages/**/*.ts", "packages/**/*.json"]
 }

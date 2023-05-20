@@ -1,11 +1,15 @@
-import { logger } from "@clean-arc/core/logger";
-import { Consumers, Transport } from "@clean-arc/common/microservices";
+import { logger } from "@clean-arc/core";
+import { Consumers, Transport } from "@clean-arc/common";
 import { AmqpConnection } from ".";
 import { AmqpConnectionOptions } from ".";
 
 export class AmqpTransport extends Transport<AmqpConnectionOptions> {
+    constructor(c: AmqpConnectionOptions) {
+        super(c);
+    }
     async connect(): Promise<any> {
         const connection = new AmqpConnection(this.configuration);
+        await connection.connect();
         return connection as AmqpConnection;
     }
 
