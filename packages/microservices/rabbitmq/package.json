@@ -16,8 +16,8 @@
     },
     "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
     "peerDependencies": {
-        "amqplib": "^0.10.3",
         "@clean-arc/common": "1.x.x",
-        "@clean-arc/core": "1.x.x"
+        "@clean-arc/core": "1.x.x",
+        "rabbitmq-client": "^3.3.2"
     }
 }

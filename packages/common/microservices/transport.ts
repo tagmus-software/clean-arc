@@ -1,10 +1,11 @@
-export type Consumers = Record<string, () => void>;
+import { EventConsumerType } from "@clean-arc/core";
+
 export abstract class Transport<T = unknown> {
     protected configuration: T;
+    protected connectionName: string;
     constructor(configuration: T) {
         this.configuration = configuration;
     }
-    abstract connect<C>(): Promise<C>;
-
-    abstract listen(handlers: Consumers): Promise<void>;
+    abstract bindConsumers(handlers: EventConsumerType[]): Promise<any>;
+    abstract connect(): Promise<void>;
 }

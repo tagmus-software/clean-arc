@@ -1,4 +1,3 @@
-import { AmqpTransport } from "../../";
 import { AmqpConnectionOptions } from "../../types";
 jest.unmock("../../amqp.transport");
 
