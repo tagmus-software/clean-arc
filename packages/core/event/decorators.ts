@@ -1,5 +1,5 @@
 import { buildConsumerHandler } from "./build";
-import { consumersMap } from "./constants";
+import { EventOptions } from "./types";
 
 export function MessagePattern(pattern: string) {
     return (
@@ -7,19 +7,27 @@ export function MessagePattern(pattern: string) {
         propertyKey: string,
         descriptor: PropertyDescriptor
     ) => {
-        buildConsumerHandler(target.consumersOptions, {
-            eventName: pattern,
-            target,
-            propertyKey,
-            callback: descriptor.value,
+        process.nextTick(() => {
+            const options = Reflect.getMetadata("consumer:options", target);
+            buildConsumerHandler({
+                options,
+                eventName: pattern,
+                target,
+                propertyKey,
+                callback: descriptor.value,
+            });
         });
     };
 }
 
-export function EventConsumer(options?: any) {
-    return <T extends { new (...args: any[]): {} }>(constructor: T) => {
-        return class extends constructor {
-            consumersOptions = options;
-        };
+export function EventConsumer(options: EventOptions = {}) {
+    if (!options.connectionName) {
+        options.connectionName = "default";
+    }
+    return <T extends { new (...args: any[]): {} }>(ctr: T) => {
+        if (!options.consumerName) {
+            options.consumerName = ctr.name;
+        }
+        Reflect.defineMetadata("consumer:options", options, ctr.prototype);
     };
 }

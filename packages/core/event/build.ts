@@ -1,13 +1,11 @@
 import { consumersMap } from "./constants";
 import { EventConsumerType } from "./types";
 
-export function buildConsumerHandler(
-    connection: string,
-    consumer: EventConsumerType
-) {
-    const consumers = consumersMap.get(connection);
+export function buildConsumerHandler(consumer: EventConsumerType) {
+    const connectionName = consumer.options?.connectionName || "default";
+    const consumers = consumersMap.get(connectionName);
     if (!consumers) {
-        consumersMap.set(connection, [consumer]);
+        consumersMap.set(connectionName, [consumer]);
     } else {
         consumers.push(consumer);
     }

@@ -1,3 +1,4 @@
+import "reflect-metadata";
 export * from "./application.factory";
 export * from "./application";
 export * from "./microservices/microservice-application";

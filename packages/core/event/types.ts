@@ -1,3 +1,5 @@
+import { EventContext } from "./context";
+
 export enum EventEngines {
     RABBITMQ = "rabbitmq",
     LOCAL = "eventListener",
@@ -5,10 +7,17 @@ export enum EventEngines {
     KAFKA = "kafka",
 }
 
+export type EventOptions = {
+    connectionName?: string;
+    consumerName?: string;
+};
+
 export type EventConsumerType = {
     eventName: string;
-    connectionName?: string;
-    callback: () => void | Promise<void>;
+    callback: (eventContext: EventContext) => void | Promise<void>;
     target: any;
     propertyKey: string;
+    options?: EventOptions;
 };
+
+export type LocalTransportConfiguration = {};

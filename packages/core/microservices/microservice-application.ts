@@ -4,7 +4,7 @@ import {
     EventConsumerType,
     EventEngines,
     LocalTransport,
-    registeredConsumers,
+    consumersMap,
 } from "../event";
 import { resolve } from "path";
 import fs from "fs/promises";
@@ -48,22 +48,27 @@ export class MicroserviceApplication extends Application {
         }
 
         await Promise.all(this.setTransports(this.configuration.transports));
-
-        this.bindConsumersTransport()
+        await Promise.all(
+            this.bindConsumersTransport(this.configuration.transports)
+        );
     }
 
-    private bindConsumersTransport() {
-        registeredConsumers.forEach((consumer) => {
-            if(consumer.connectionName === ) {
-
-            }
-        })
+    private bindConsumersTransport(transports: Transport[]) {
+        return transports.map((transport) => {
+            const consumers = consumersMap.get(transport.connectionName) || [];
+            return Promise.all(
+                consumers.map((consumer) => transport.bindConsumer(consumer))
+            );
+        });
     }
 
     private setTransports(transports: Transport[]) {
+        if (transports.length == 1) {
+            transports[0].connectionName = "default";
+        }
         return transports.map(async (transport) => {
             try {
-                await transport.connect(); 
+                await transport.connect();
 
                 logger.info(
                     `${transport.constructor.name} connection established`
@@ -87,7 +92,6 @@ export class MicroserviceApplication extends Application {
                 default:
                     break;
             }
-            
         });
     }
 

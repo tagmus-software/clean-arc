@@ -1,3 +1,5 @@
+import EventEmitter from "events";
 import { EventConsumerType } from "./types";
 
-export const registeredConsumers: Map<string, EventConsumerType[]> = new Map();
+export const consumersMap: Map<string, EventConsumerType[]> = new Map();
+export const localEventEmitter = new EventEmitter();
