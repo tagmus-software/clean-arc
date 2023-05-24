@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/express",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Express Engine for the framework @clean-arc",
     "scripts": {
         "test": "npm test"

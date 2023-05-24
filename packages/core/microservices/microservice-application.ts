@@ -20,15 +20,15 @@ export class MicroserviceApplication extends Application {
      *
      */
     constructor(protected configuration: MicroserviceConfiguration) {
+        super(configuration);
         if (!configuration.consumers) {
-            configuration.consumers = resolve(
+            this.configuration.consumers = resolve(
                 __dirname,
                 "../",
                 "src/",
                 "interfaces"
             );
         }
-        super(configuration);
     }
 
     get #_consumers() {

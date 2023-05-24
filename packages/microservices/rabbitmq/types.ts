@@ -1,4 +1,17 @@
-import { AMQPMessage, AMQPQueue, ConsumeParams } from "@cloudamqp/amqp-client";
+import {
+    AMQPChannel,
+    AMQPMessage,
+    AMQPQueue,
+    ConsumeParams,
+} from "@cloudamqp/amqp-client";
+import { RabbitMqBatchMessage } from "./batch-message";
+import { RabbitMqMessage } from "./message";
+
+export type RabbitMqBatchOptions = {
+    enabled?: boolean;
+    batchSize: number;
+    batchTimeWait?: number;
+};
 
 export type RabbitMqQueue = {
     name: string;
@@ -7,6 +20,13 @@ export type RabbitMqQueue = {
     exclusive?: boolean;
     passive?: boolean;
     channelId?: number;
+
+    batch?: RabbitMqBatchOptions;
+
+    transactionMode?: boolean;
+    transactionAutoCommit?: boolean;
+
+    messagesInParallel?: number;
     consumeParams?: ConsumeParams;
 };
 
@@ -16,6 +36,7 @@ export type RabbitMqConfiguration = {
 };
 
 export type RabbitMqContextParams = {
-    msg: AMQPMessage;
+    msg: RabbitMqMessage | RabbitMqBatchMessage;
     queue: AMQPQueue;
+    channel: AMQPChannel;
 };

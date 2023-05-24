@@ -1,20 +1,56 @@
 import { EventContext } from "@clean-arc/core";
 import { RabbitMqContextParams } from "./types";
+import { AMQPMessage } from "@cloudamqp/amqp-client";
+import { RabbitMqBatchMessage } from "./batch-message";
+import { RabbitMqMessage } from "./message";
 
 export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
-    async publish(data: any) {
-        this.context.queue.publish(JSON.stringify(data));
+    public isTransactionModeActive: boolean;
+
+    async publishMessage(data: any) {
+        await this.context.queue.publish(JSON.stringify(data));
         return true;
     }
     async closeChannel() {
         await this.context.queue.channel.close();
     }
 
-    getFullMessage() {
+    public getFullMessage() {
+        if (this.isBatchMessage()) {
+            return null;
+        }
         return this.context.msg;
     }
 
-    getJsonMessage() {
-        return JSON.parse(this.context.msg.bodyString() || "");
+    public getJsonMessage() {
+        if (this.isBatchMessage()) {
+            return null;
+        }
+
+        return (this.context.msg as RabbitMqMessage).toJson();
+    }
+
+    public getBatchMessage(): RabbitMqBatchMessage | undefined {
+        if (this.isBatchMessage()) {
+            return this.context.msg as RabbitMqBatchMessage;
+        }
+    }
+
+    public isBatchMessage() {
+        return this.context.msg instanceof RabbitMqBatchMessage;
+    }
+
+    public commitTransaction() {
+        if (!this.isTransactionModeActive) {
+            return null;
+        }
+        return this.context.channel.txCommit();
+    }
+
+    public rollbackTransaction() {
+        if (!this.isTransactionModeActive) {
+            return null;
+        }
+        return this.context.channel.txRollback();
     }
 }

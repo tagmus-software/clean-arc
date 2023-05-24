@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/rabbitmq",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "description": "RabbitMQ Integration for the framework @clean-arc",
     "scripts": {
         "test": "npm test"
@@ -17,7 +17,9 @@
     "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
     "peerDependencies": {
         "@clean-arc/common": "1.x.x",
-        "@clean-arc/core": "1.x.x",
-        "rabbitmq-client": "^3.3.2"
+        "@clean-arc/core": "1.x.x"
+    },
+    "dependencies": {
+        "@cloudamqp/amqp-client": "^2.1.1"
     }
 }

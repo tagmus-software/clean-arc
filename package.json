@@ -10,7 +10,7 @@
         "publish:common": "npm run build && cd ./dist/common && npm publish --access public",
         "publish:core": "npm run build && cd ./dist/core && npm publish --access public",
         "publish:rabbitmq": "npm run build && cd ./dist/microservices/rabbitmq && npm publish --access public",
-        "publish:express": "npm run build && cd ./dist/http/express-server && npm publish --access public",
+        "publish:express": "npm run build && cd ./dist/http/express && npm publish --access public",
         "publish:all": "npm run publish:common && npm run publish:core && npm run publish:rabbitmq && npm run publish:express"
     },
     "keywords": [
@@ -31,6 +31,7 @@
         "@cloudamqp/amqp-client": "^2.1.1",
         "express": "^4.17.1",
         "mysql2": "^3.1.2",
+        "nanoid": "^4.0.2",
         "pino": "^8.11.0",
         "reflect-metadata": "^0.1.13"
     },
