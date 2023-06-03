@@ -10,6 +10,7 @@ export enum EventEngines {
 export type EventOptions = {
     connectionName?: string;
     consumerName?: string;
+    isActive?: boolean;
 };
 
 export type EventConsumerType = {

@@ -1,7 +1,10 @@
 import { buildConsumerHandler } from "./build";
 import { EventOptions } from "./types";
 
-export function MessagePattern(pattern: string) {
+export function MessagePattern(
+    pattern: string,
+    extraOptions: { isActive?: boolean } = {}
+) {
     return (
         target: any,
         propertyKey: string,
@@ -10,7 +13,10 @@ export function MessagePattern(pattern: string) {
         process.nextTick(() => {
             const options = Reflect.getMetadata("consumer:options", target);
             buildConsumerHandler({
-                options,
+                options: {
+                    ...options,
+                    ...extraOptions,
+                },
                 eventName: pattern,
                 target,
                 propertyKey,
@@ -20,7 +26,7 @@ export function MessagePattern(pattern: string) {
     };
 }
 
-export function EventConsumer(options: EventOptions = {}) {
+export function EventConsumer(options: EventOptions = { isActive: true }) {
     if (!options.connectionName) {
         options.connectionName = "default";
     }

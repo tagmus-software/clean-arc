@@ -12,8 +12,8 @@ type BatchOptions = {
     queueName: string;
 } & RabbitMqBatchOptions;
 
-export class RabbitMqBatchMessage {
-    protected messagesMaps: Map<number, RabbitMqMessage>[];
+export class RabbitMqBatchMessage<BodyType = any> {
+    protected messagesMaps: Map<number, RabbitMqMessage<BodyType>>[];
 
     protected batchSize: BatchOptions["batchSize"];
     protected batchTimeWait: BatchOptions["batchTimeWait"];
@@ -52,7 +52,7 @@ export class RabbitMqBatchMessage {
         return this.messagesMaps[0];
     }
 
-    public accumulateMessage(msg: RabbitMqMessage) {
+    public accumulateMessage(msg: RabbitMqMessage<BodyType>) {
         clearTimeout(this.timeout);
         if (this.lastBatchMap.size <= this.batchSize) {
             this.lastBatchMap.set(msg.deliveryTag, msg);
@@ -63,16 +63,29 @@ export class RabbitMqBatchMessage {
         return this.currentBatchMap.size >= this.batchSize;
     }
 
-    public getMessagesJson<T>() {
-        const msgs: RabbitMqMessageObj[] = [];
+    public getMessagesJson() {
+        const msgs: RabbitMqMessageObj<BodyType>[] = [];
         this.currentBatchMap.forEach((msg) => {
-            msgs.push(msg.toJson<T>());
+            msgs.push(msg.toJson());
         });
         return msgs;
     }
 
     public async ack(deliveryTag: number) {
         await this.currentBatchMap.get(deliveryTag)?.ack();
+    }
+
+    public async nack(deliveryTag: number) {
+        await this.currentBatchMap.get(deliveryTag)?.nack();
+    }
+
+    public async nackAll() {
+        const promises: Promise<void>[] = [];
+        this.messagesMaps.shift()?.forEach((msg, key) => {
+            promises.push(msg.nack());
+        });
+
+        return Promise.all(promises);
     }
 
     public async ackAll() {

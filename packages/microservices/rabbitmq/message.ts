@@ -1,13 +1,14 @@
 import { AMQPMessage } from "@cloudamqp/amqp-client";
 
-export interface RabbitMqMessageObj<T = unknown> {
+export interface RabbitMqMessageObj<BodyType = unknown> {
     id?: string;
     headers: any;
     deliveryTag: number;
     consumerTag: string;
-    body: T;
+    correlationId?: string;
+    body: BodyType;
 }
-export class RabbitMqMessage {
+export class RabbitMqMessage<BodyType = any> {
     deliveryTag: number;
     constructor(public msg: AMQPMessage) {
         this.deliveryTag = msg.deliveryTag;
@@ -21,12 +22,13 @@ export class RabbitMqMessage {
         return this.msg.nack();
     }
 
-    toJson<T>(): RabbitMqMessageObj<T> {
+    toJson(): RabbitMqMessageObj<BodyType> {
         return {
             id: this.msg.properties.messageId,
             headers: this.msg.properties.headers,
             deliveryTag: this.msg.deliveryTag,
             consumerTag: this.msg.consumerTag,
+            correlationId: this.msg.properties.correlationId,
             body: JSON.parse(this.msg.bodyString() || ""),
         };
     }

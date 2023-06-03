@@ -5,7 +5,7 @@
     "main": "src/main.ts",
     "scripts": {
         "test": "jest",
-        "build": "tsc --project tsconfig.json",
+        "build": "rm -R ./dist && tsc --project tsconfig.json",
         "lint": "eslint . --ext .ts",
         "publish:common": "npm run build && cd ./dist/common && npm publish --access public",
         "publish:core": "npm run build && cd ./dist/core && npm publish --access public",
@@ -36,8 +36,6 @@
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
-        "@types/amqp": "^0.2.5",
-        "@types/amqplib": "^0.10.1",
         "@types/express": "^4.17.13",
         "@types/jest": "^29.5.1",
         "@types/node": "^16.11.6",

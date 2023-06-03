@@ -56,6 +56,7 @@ export class RabbitMqTransport extends Transport<
         }
         await queue.subscribe(appQueue.consumeParams, async (_msg) => {
             const msg = new RabbitMqMessage(_msg);
+
             let context: RabbitMqContext;
             if (appQueue.batch && appQueue.batch.enabled) {
                 context = new RabbitMqContext({

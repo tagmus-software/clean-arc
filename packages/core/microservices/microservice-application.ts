@@ -24,9 +24,8 @@ export class MicroserviceApplication extends Application {
         if (!configuration.consumers) {
             this.configuration.consumers = resolve(
                 __dirname,
-                "../",
-                "src/",
-                "interfaces"
+                "../../../../",
+                "src/interfaces/consumers/"
             );
         }
     }
@@ -57,7 +56,18 @@ export class MicroserviceApplication extends Application {
         return transports.map((transport) => {
             const consumers = consumersMap.get(transport.connectionName) || [];
             return Promise.all(
-                consumers.map((consumer) => transport.bindConsumer(consumer))
+                consumers
+                    .filter(({ options, eventName, propertyKey }) => {
+                        const isActive = !(options?.isActive === false);
+
+                        if (!isActive) {
+                            logger.info(
+                                `Consumer ${options.consumerName}.${propertyKey}(...) - on queue ${eventName} is not active`
+                            );
+                        }
+                        return isActive;
+                    })
+                    .map((consumer) => transport.bindConsumer(consumer))
             );
         });
     }
@@ -99,6 +109,17 @@ export class MicroserviceApplication extends Application {
         let dirFiles: string[] = [];
         try {
             dirFiles = await fs.readdir(resolve(consumersPath));
+            dirFiles = dirFiles.filter(
+                (v) => v.includes(".js") || v.includes(".ts")
+            );
+
+            if (!dirFiles.length) {
+                throw new GenericError(
+                    `Consumers not found in the path informed ${JSON.stringify(
+                        consumersPath
+                    )}`
+                );
+            }
         } catch (err: Error | any) {
             if (err.code === "ENOENT") {
                 logger.error(err, "Consumer Failed");

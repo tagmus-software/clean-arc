@@ -15,6 +15,7 @@ export type RabbitMqBatchOptions = {
 
 export type RabbitMqQueue = {
     name: string;
+
     autoDelete?: boolean;
     durable?: boolean;
     exclusive?: boolean;
