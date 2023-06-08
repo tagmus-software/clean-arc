@@ -34,6 +34,7 @@ export type RabbitMqQueue = {
 export type RabbitMqConfiguration = {
     url: string;
     queues?: RabbitMqQueue[];
+    disabledPublish?: boolean;
 };
 
 export type RabbitMqContextParams = {

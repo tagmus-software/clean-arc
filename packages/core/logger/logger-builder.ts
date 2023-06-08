@@ -22,8 +22,8 @@ export async function buildLogger({
     switch (engine) {
         case LoggerEngine.PINO:
             // eslint-disable-next-line no-case-declarations
-            const pino = await import(LoggerEngine.PINO);
-            logger = new Logger(pino.pino(pinoOptions));
+            const { pino } = await import(LoggerEngine.PINO);
+            logger = new Logger(pino(pinoOptions));
             break;
         default:
             logger = new Logger(console);

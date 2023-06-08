@@ -9,14 +9,6 @@ export interface ApplicationConfiguration {
 export abstract class Application {
     constructor(protected configuration: ApplicationConfiguration) {}
 
-    public async setupDatabase(
-        databases: ApplicationConfiguration["databases"]
-    ) {
-        if (databases && databases.length) {
-            await Promise.all(this.initDatabasesConnection(databases));
-        }
-    }
-
     public async setupLogger(loggerOptions: LoggerOptions) {
         loggerOptions = Object.assign(
             { enabled: true, engine: "console" },
@@ -25,8 +17,12 @@ export abstract class Application {
         await buildLogger(loggerOptions);
     }
 
-    public setupControllers() {
-        logger.info("EMPTY setup");
+    public async setupDatabase(
+        databases: ApplicationConfiguration["databases"]
+    ) {
+        if (databases && databases.length) {
+            await Promise.all(this.initDatabasesConnection(databases));
+        }
     }
 
     abstract listen(port?: number): Promise<void>;

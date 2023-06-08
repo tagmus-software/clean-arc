@@ -28,18 +28,26 @@ export class RabbitMqTransport extends Transport<
     private queueMap: Map<string, QueueBind>;
 
     async bindConsumer(handler: EventConsumerType): Promise<void> {
-        const { queue, appQueue } = this.queueMap.get(
-            handler.eventName
-        ) as QueueBind;
+        let consumerName = `rabbitmq consumer  ${handler.options?.consumerName}.${handler.propertyKey}(...) `;
+        if (!this.localActiveConsumersMap.get(handler.eventName)) {
+            logger.info(
+                `${consumerName} - on queue ${handler.eventName} is not active`
+            );
+            return;
+        }
+        const { queue, appQueue } =
+            (this.queueMap.get(handler.eventName) as QueueBind) || {};
 
         if (!queue) {
             throw new GenericError(
-                `Queue "${handler.eventName}" for ${handler.options?.consumerName} not declared on connection startup`,
+                `Queue "${handler.eventName}" for ${consumerName} not declared on connection startup`,
                 "ERR_RABBITMQ_QUEUE_NOT_DECLARED"
             );
         }
 
-        logger.info(`Starting consuming queue "${handler.eventName}"`);
+        logger.info(
+            `Starting consuming queue "${handler.eventName}" in the ${consumerName}`
+        );
 
         let batchMessage: RabbitMqBatchMessage;
         if (appQueue.batch && appQueue.batch.enabled) {
@@ -102,14 +110,38 @@ export class RabbitMqTransport extends Transport<
 
     async connect(): Promise<void> {
         const amqp = new AMQPClient(this.configuration.url);
+        amqp.onerror = (error) => {
+            logger.error(error, "ERR_RABBITMQ_CONNECTION");
+            throw new GenericError(error, "ERR_RABBITMQ_CONNECTION");
+        };
         this.connection = await amqp.connect();
+        if (this.configuration.disabledPublish) {
+            RabbitMqContext.prototype.publishMessage = async (data) => {
+                logger.debug(data, `Fake publish`);
+                return true;
+            };
 
+            RabbitMqContext.prototype.publishMessageOnQueue = async (
+                ...args: any[]
+            ) => {
+                logger.debug(args, `Fake publish on queue`);
+                return 1;
+            };
+        }
         await Promise.all(this.setupQueues(this.configuration.queues || []));
     }
 
     private setupQueues(queues: RabbitMqQueue[]) {
         this.queueMap = new Map();
         return queues.map(async (appQueue) => {
+            let active = this.localActiveConsumersMap.get(appQueue.name);
+            if (!active) {
+                logger.debug(
+                    `Skiping creation of channel and queue(${appQueue.name}) because local consumer is inactive with value ${active}`
+                );
+                return;
+            }
+
             const channel = await this.connection.channel(appQueue.channelId);
 
             let prefetch = appQueue.messagesInParallel || 15;
@@ -142,12 +174,13 @@ export class RabbitMqTransport extends Transport<
 
             if (autoTransaction) await context.commitTransaction();
         } catch (error) {
+            if (autoTransaction) await context.rollbackTransaction();
             if (error instanceof GenericError) {
                 logger.error(error.getBody(), error.statusCode as string);
             } else {
                 logger.error(error, "ERR_RABBITMQ_CONSUMER");
+                throw error;
             }
-            if (autoTransaction) await context.rollbackTransaction();
         }
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/common",
-    "version": "1.0.4",
+    "version": "1.0.8",
     "description": "Common functionalities for the framework the framework @clean-arc",
     "scripts": {
         "test": "npm test"

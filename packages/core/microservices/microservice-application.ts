@@ -22,10 +22,12 @@ export class MicroserviceApplication extends Application {
     constructor(protected configuration: MicroserviceConfiguration) {
         super(configuration);
         if (!configuration.consumers) {
+            const rootDir = process.env.CLEAN_ARC_ROOT_DIR || "src/";
             this.configuration.consumers = resolve(
                 __dirname,
                 "../../../../",
-                "src/interfaces/consumers/"
+                rootDir,
+                "interfaces/consumers/"
             );
         }
     }
@@ -56,18 +58,7 @@ export class MicroserviceApplication extends Application {
         return transports.map((transport) => {
             const consumers = consumersMap.get(transport.connectionName) || [];
             return Promise.all(
-                consumers
-                    .filter(({ options, eventName, propertyKey }) => {
-                        const isActive = !(options?.isActive === false);
-
-                        if (!isActive) {
-                            logger.info(
-                                `Consumer ${options.consumerName}.${propertyKey}(...) - on queue ${eventName} is not active`
-                            );
-                        }
-                        return isActive;
-                    })
-                    .map((consumer) => transport.bindConsumer(consumer))
+                consumers.map((consumer) => transport.bindConsumer(consumer))
             );
         });
     }
@@ -78,10 +69,20 @@ export class MicroserviceApplication extends Application {
         }
         return transports.map(async (transport) => {
             try {
+                logger.debug(
+                    `Initialing connection with transport ${transport.constructor.name} - connection ${transport.connectionName}`
+                );
+
+                process.nextTick(() => {
+                    transport.setLocalConsumers(
+                        consumersMap.get(transport.connectionName) || []
+                    );
+                });
+
                 await transport.connect();
 
                 logger.info(
-                    `${transport.constructor.name} connection established`
+                    `${transport.constructor.name} connection(${transport.connectionName}) established`
                 );
             } catch (error) {
                 logger.error(
@@ -108,10 +109,16 @@ export class MicroserviceApplication extends Application {
     private async handleConsumersFromDirectory(consumersPath: string) {
         let dirFiles: string[] = [];
         try {
-            dirFiles = await fs.readdir(resolve(consumersPath));
-            dirFiles = dirFiles.filter(
-                (v) => v.includes(".js") || v.includes(".ts")
+            logger.debug(
+                `Reading path "${consumersPath}" for reaching consumers`
             );
+            dirFiles = await fs.readdir(resolve(consumersPath));
+            dirFiles = dirFiles.filter((v) => {
+                return (
+                    (v.includes(".js") || v.includes(".ts")) &&
+                    !v.includes(".d.ts")
+                );
+            });
 
             if (!dirFiles.length) {
                 throw new GenericError(
@@ -124,10 +131,16 @@ export class MicroserviceApplication extends Application {
             if (err.code === "ENOENT") {
                 logger.error(err, "Consumer Failed");
             }
+            logger.debug(err);
+            throw err;
         }
 
         await Promise.all(
-            dirFiles.map((fileName) => import(`${consumersPath}/${fileName}`))
+            dirFiles.map((fileName) => {
+                const path = `${consumersPath}/${fileName}`;
+                logger.debug(`Importing consumer ${path}`);
+                return import(path);
+            })
         );
     }
 }
