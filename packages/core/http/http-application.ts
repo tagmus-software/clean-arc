@@ -11,8 +11,6 @@ export class HttpApplication extends Application {
         super(configuration);
     }
     public async listen(port: number) {
-        this.configuration.httpServer.listen(port).then(() => {
-            logger.info(`Http Application started on localhost:${port}`);
-        });
+        return this.configuration.httpServer.listen(port);
     }
 }

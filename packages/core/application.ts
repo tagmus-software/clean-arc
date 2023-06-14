@@ -2,7 +2,7 @@ import { Database } from "@clean-arc/common";
 import { LoggerOptions, buildLogger, logger } from "@clean-arc/core";
 
 export interface ApplicationConfiguration {
-    databases: Database<unknown>[];
+    databases?: Database<unknown>[];
     logger?: LoggerOptions;
 }
 
@@ -28,7 +28,7 @@ export abstract class Application {
     abstract listen(port?: number): Promise<void>;
 
     private initDatabasesConnection(
-        databases: ApplicationConfiguration["databases"]
+        databases: ApplicationConfiguration["databases"] = []
     ) {
         return databases.map(async (d) => {
             try {
