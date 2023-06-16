@@ -179,8 +179,8 @@ export class RabbitMqTransport extends Transport<
                 logger.error(error.getBody(), error.statusCode as string);
             } else {
                 logger.error(error, "ERR_RABBITMQ_CONSUMER");
-                throw error;
             }
+            throw error;
         }
     }
 }

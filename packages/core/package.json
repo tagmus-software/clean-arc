@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/core",
-    "version": "1.2.5",
+    "version": "1.2.7",
     "description": "Core functionalities for the framework @clean-arc",
     "scripts": {
         "test": "npm test"

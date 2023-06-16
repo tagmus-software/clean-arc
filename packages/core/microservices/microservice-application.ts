@@ -55,12 +55,17 @@ export class MicroserviceApplication extends Application {
     }
 
     private bindConsumersTransport(transports: Transport[]) {
-        return transports.map((transport) => {
-            const consumers = consumersMap.get(transport.connectionName) || [];
-            return Promise.all(
-                consumers.map((consumer) => transport.bindConsumer(consumer))
-            );
-        });
+        return transports
+            .filter(({ isNotConnected }) => !isNotConnected)
+            .map((transport) => {
+                const consumers =
+                    consumersMap.get(transport.connectionName) || [];
+                return Promise.all(
+                    consumers.map((consumer) =>
+                        transport.bindConsumer(consumer)
+                    )
+                );
+            });
     }
 
     private setTransports(transports: Transport[]) {

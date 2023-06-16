@@ -11,6 +11,9 @@ export abstract class Transport<T = unknown, C = any> {
         this.configuration = configuration;
         this.localActiveConsumersMap = new Map();
     }
+    get isNotConnected() {
+        return !this.connection;
+    }
     abstract bindConsumer(consumer: EventConsumerType): Promise<void>;
     abstract connect(): Promise<void>;
     setLocalConsumers(consumers: EventConsumerType[]) {

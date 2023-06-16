@@ -10,15 +10,17 @@ export let logger: Logger = new Logger({
     error() {},
 });
 
+let started: boolean;
+
 export async function buildLogger({
     enabled,
     engine,
     pinoOptions,
 }: LoggerOptions) {
-    if (!enabled) {
+    if (!enabled || started) {
         return;
     }
-
+    started = true;
     switch (engine) {
         case LoggerEngine.PINO:
             // eslint-disable-next-line no-case-declarations

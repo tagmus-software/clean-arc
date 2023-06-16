@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/rabbitmq",
-    "version": "1.3.3",
+    "version": "1.3.6",
     "description": "RabbitMQ Integration for the framework @clean-arc",
     "scripts": {
         "test": "npm test"
