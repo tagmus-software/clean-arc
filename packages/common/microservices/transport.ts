@@ -14,8 +14,14 @@ export abstract class Transport<T = unknown, C = any> {
     get isNotConnected() {
         return !this.connection;
     }
+
+    get isConnected() {
+        return this.connection != undefined;
+    }
+
     abstract bindConsumer(consumer: EventConsumerType): Promise<void>;
     abstract connect(): Promise<void>;
+
     setLocalConsumers(consumers: EventConsumerType[]) {
         logger.debug(`setting local ${consumers.length} costumers`);
         consumers.forEach(({ eventName, options }) => {

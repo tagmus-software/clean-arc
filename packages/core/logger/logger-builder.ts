@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Logger } from "./logger.provider";
-import { LoggerEngine, LoggerOptions } from "./types";
+import { LoggerOptions } from "./types";
 
 export let logger: Logger = new Logger({
     debug() {},
@@ -8,27 +8,15 @@ export let logger: Logger = new Logger({
     log() {},
     warn() {},
     error() {},
+    trace() {},
 });
 
 let started: boolean;
 
-export async function buildLogger({
-    enabled,
-    engine,
-    pinoOptions,
-}: LoggerOptions) {
+export async function buildLogger({ enabled, loggerInstance }: LoggerOptions) {
     if (!enabled || started) {
         return;
     }
     started = true;
-    switch (engine) {
-        case LoggerEngine.PINO:
-            // eslint-disable-next-line no-case-declarations
-            const { pino } = await import(LoggerEngine.PINO);
-            logger = new Logger(pino(pinoOptions));
-            break;
-        default:
-            logger = new Logger(console);
-            break;
-    }
+    logger = new Logger(loggerInstance ?? console);
 }

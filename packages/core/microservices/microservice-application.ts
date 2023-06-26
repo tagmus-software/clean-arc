@@ -31,6 +31,15 @@ export class MicroserviceApplication extends Application {
             );
         }
     }
+    get log() {
+        return logger.append({ file: __filename.split("/").pop() });
+    }
+    get #transports() {
+        if (this.configuration.transports?.length == 1) {
+            this.configuration.transports[0].connectionName = "default";
+        }
+        return this.configuration.transports || [];
+    }
 
     get #_consumers() {
         if (!Array.isArray(this.configuration.consumers)) {
@@ -48,35 +57,39 @@ export class MicroserviceApplication extends Application {
             this.configuration.transports = [new LocalTransport({})];
         }
 
-        await Promise.all(this.setTransports(this.configuration.transports));
-        await Promise.all(
-            this.bindConsumersTransport(this.configuration.transports)
+        await Promise.all(this.setTransports());
+
+        await Promise.all(this.bindConsumersTransport());
+    }
+
+    private bindConsumersTransport() {
+        this.log.trace(
+            { transports: this.#transports },
+            `Binding consumers for transports`
         );
+
+        return this.#transports.map((transport) => {
+            const consumers = consumersMap.get(transport.connectionName) || [];
+
+            this.log.trace(
+                { consumers },
+                "consumers found for transport and started binding"
+            );
+
+            return Promise.all(
+                consumers.map((consumer) => transport.bindConsumer(consumer))
+            );
+        });
     }
 
-    private bindConsumersTransport(transports: Transport[]) {
-        return transports
-            .filter(({ isNotConnected }) => !isNotConnected)
-            .map((transport) => {
-                const consumers =
-                    consumersMap.get(transport.connectionName) || [];
-                return Promise.all(
-                    consumers.map((consumer) =>
-                        transport.bindConsumer(consumer)
-                    )
-                );
-            });
-    }
-
-    private setTransports(transports: Transport[]) {
-        if (transports.length == 1) {
-            transports[0].connectionName = "default";
-        }
-        return transports.map(async (transport) => {
+    private setTransports() {
+        return this.#transports.map(async (transport) => {
             try {
-                logger.debug(
+                this.log.debug(
                     `Initialing connection with transport ${transport.constructor.name} - connection ${transport.connectionName}`
                 );
+
+                this.log.trace("Setting active local consumer");
 
                 process.nextTick(() => {
                     transport.setLocalConsumers(
@@ -85,12 +98,11 @@ export class MicroserviceApplication extends Application {
                 });
 
                 await transport.connect();
-
-                logger.info(
+                this.log.info(
                     `${transport.constructor.name} connection(${transport.connectionName}) established`
                 );
             } catch (error) {
-                logger.error(
+                this.log.error(
                     error,
                     `Error trying to connect transport - ${transport.constructor.name} `
                 );
@@ -134,16 +146,16 @@ export class MicroserviceApplication extends Application {
             }
         } catch (err: Error | any) {
             if (err.code === "ENOENT") {
-                logger.error(err, "Consumer Failed");
+                this.log.error(err, "Consumer Failed");
             }
-            logger.debug(err);
+            this.log.debug(err);
             throw err;
         }
 
         await Promise.all(
             dirFiles.map((fileName) => {
                 const path = `${consumersPath}/${fileName}`;
-                logger.debug(`Importing consumer ${path}`);
+                this.log.debug(`Importing consumer ${path}`);
                 return import(path);
             })
         );

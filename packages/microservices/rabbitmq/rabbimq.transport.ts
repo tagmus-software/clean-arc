@@ -21,6 +21,7 @@ type QueueBind = {
     appQueue: RabbitMqQueue;
     queue: AMQPQueue;
 };
+const log = logger.append({ file: __filename.split("/").pop() });
 export class RabbitMqTransport extends Transport<
     RabbitMqConfiguration,
     AMQPBaseClient
@@ -30,7 +31,7 @@ export class RabbitMqTransport extends Transport<
     async bindConsumer(handler: EventConsumerType): Promise<void> {
         let consumerName = `rabbitmq consumer  ${handler.options?.consumerName}.${handler.propertyKey}(...) `;
         if (!this.localActiveConsumersMap.get(handler.eventName)) {
-            logger.info(
+            log.info(
                 `${consumerName} - on queue ${handler.eventName} is not active`
             );
             return;
@@ -45,7 +46,7 @@ export class RabbitMqTransport extends Transport<
             );
         }
 
-        logger.info(
+        log.info(
             `Starting consuming queue "${handler.eventName}" in the ${consumerName}`
         );
 
@@ -111,20 +112,20 @@ export class RabbitMqTransport extends Transport<
     async connect(): Promise<void> {
         const amqp = new AMQPClient(this.configuration.url);
         amqp.onerror = (error) => {
-            logger.error(error, "ERR_RABBITMQ_CONNECTION");
+            log.error(error, "ERR_RABBITMQ_CONNECTION");
             throw new GenericError(error, "ERR_RABBITMQ_CONNECTION");
         };
         this.connection = await amqp.connect();
         if (this.configuration.disabledPublish) {
             RabbitMqContext.prototype.publishMessage = async (data) => {
-                logger.debug(data, `Fake publish`);
+                log.debug(data, `Fake publish`);
                 return true;
             };
 
             RabbitMqContext.prototype.publishMessageOnQueue = async (
                 ...args: any[]
             ) => {
-                logger.debug(args, `Fake publish on queue`);
+                log.debug(args, `Fake publish on queue`);
                 return 1;
             };
         }
@@ -136,7 +137,7 @@ export class RabbitMqTransport extends Transport<
         return queues.map(async (appQueue) => {
             let active = this.localActiveConsumersMap.get(appQueue.name);
             if (!active) {
-                logger.debug(
+                log.debug(
                     `Skiping creation of channel and queue(${appQueue.name}) because local consumer is inactive with value ${active}`
                 );
                 return;
@@ -176,9 +177,9 @@ export class RabbitMqTransport extends Transport<
         } catch (error) {
             if (autoTransaction) await context.rollbackTransaction();
             if (error instanceof GenericError) {
-                logger.error(error.getBody(), error.statusCode as string);
+                log.error(error.getBody(), error.statusCode as string);
             } else {
-                logger.error(error, "ERR_RABBITMQ_CONSUMER");
+                log.error(error, "ERR_RABBITMQ_CONSUMER");
             }
             throw error;
         }
