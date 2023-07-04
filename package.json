@@ -3,10 +3,12 @@
     "version": "0.0.0-development",
     "description": "A simple clean architecture framework, letting possible to code in the simplest way and letting all the code explicit",
     "main": "src/main.ts",
+    "private": true,
     "scripts": {
         "test": "jest",
         "build": "rimraf ./dist && tsc --project tsconfig.json",
         "lint": "eslint . --ext .ts",
+        "publish-ci": "lerna publish from-package -y --force-publish=* ",
         "publish:common": "npm run build && cd ./dist/common && npm publish --access public",
         "publish:core": "npm run build && cd ./dist/core && npm publish --access public",
         "publish:rabbitmq": "npm run build && cd ./dist/microservices/rabbitmq && npm publish --access public",
@@ -27,7 +29,9 @@
         "url": "https://github.com/tagmus-software/clean-arc"
     },
     "workspaces": [
-        "packages/*"
+        "packages/*",
+        "packages/microservices/*",
+        "packages/http/*"
     ],
     "license": "ISC",
     "dependencies": {
@@ -47,6 +51,7 @@
         "eslint": "^8.39.0",
         "eslint-config-prettier": "^8.8.0",
         "jest": "^29.5.0",
+        "lerna": "^7.1.1",
         "pino-pretty": "^10.0.0",
         "rimraf": "^5.0.1",
         "ts-jest": "^29.1.0",

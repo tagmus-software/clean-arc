@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/express",
-    "version": "1.0.6",
+    "version": "2.0.0",
     "description": "Express Engine for the framework @clean-arc",
     "scripts": {
         "test": "npm test"
@@ -16,7 +16,10 @@
     },
     "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
     "peerDependencies": {
-        "express": "^4.17.1",
-        "@clean-arc/common": "x.x.x"
+        "@clean-arc/common": "*",
+        "express": "^4.17.1"
+    },
+    "publishConfig": {
+        "directory": "../../../dist/http/express"
     }
 }

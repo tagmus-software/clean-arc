@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/common",
-    "version": "1.0.8",
+    "version": "2.0.0",
     "description": "Common functionalities for the framework the framework @clean-arc",
     "scripts": {
         "test": "npm test"
@@ -14,5 +14,8 @@
     "bugs": {
         "url": "https://github.com/tagmus-software/clean-arc/issues"
     },
-    "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme"
+    "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
+    "publishConfig": {
+        "directory": "../../dist/common"
+    }
 }
