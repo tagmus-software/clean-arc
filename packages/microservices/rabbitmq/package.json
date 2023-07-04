@@ -16,8 +16,8 @@
     },
     "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
     "peerDependencies": {
-        "@clean-arc/common": "1.x.x",
-        "@clean-arc/core": "1.x.x"
+        "@clean-arc/common": "x.x.x",
+        "@clean-arc/core": "x.x.x"
     },
     "dependencies": {
         "@cloudamqp/amqp-client": "^2.1.1"

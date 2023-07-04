@@ -1,0 +1,29 @@
+name: CI
+on:
+    pull_request:
+        branches: [main]
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    lint-test-build:
+        name: npm lint, test, and build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18.x"
+                  cache: "npm"
+            - run: npm i
+              name: "Installing dependencies"
+
+            - run: npm run lint
+              name: "Linting the project"
+
+            - uses: ArtiomTr/jest-coverage-report-action@v2
+              name: "Testing the project"
+
+            - run: npm run build
+              name: "Linting the project"

@@ -1,6 +1,6 @@
 {
     "name": "clean-arc",
-    "version": "1.0.0",
+    "version": "0.0.0-development",
     "description": "A simple clean architecture framework, letting possible to code in the simplest way and letting all the code explicit",
     "main": "src/main.ts",
     "scripts": {
@@ -26,6 +26,9 @@
         "type": "git",
         "url": "https://github.com/tagmus-software/clean-arc"
     },
+    "workspaces": [
+        "packages/*"
+    ],
     "license": "ISC",
     "dependencies": {
         "@cloudamqp/amqp-client": "^2.1.1",

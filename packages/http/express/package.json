@@ -17,6 +17,6 @@
     "homepage": "https://github.com/tagmus-software/clean-arc/tree/main#readme",
     "peerDependencies": {
         "express": "^4.17.1",
-        "@clean-arc/common": "1.x.x"
+        "@clean-arc/common": "x.x.x"
     }
 }
