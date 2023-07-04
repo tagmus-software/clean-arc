@@ -1,11 +1,6 @@
 import { GenericError, Transport } from "@clean-arc/common";
 import { Application, ApplicationConfiguration } from "../application";
-import {
-    EventConsumerType,
-    EventEngines,
-    LocalTransport,
-    consumersMap,
-} from "../event";
+import { EventConsumerType, LocalTransport, consumersMap } from "../event";
 import { resolve } from "path";
 import fs from "fs/promises";
 import { logger } from "../logger";
@@ -109,6 +104,7 @@ export class MicroserviceApplication extends Application {
             }
         });
     }
+
     private setupConsumers() {
         return this.#_consumers.map(async (consumer) => {
             switch (typeof consumer) {

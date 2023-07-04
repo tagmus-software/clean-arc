@@ -21,4 +21,6 @@ export type EventConsumerType = {
     options?: EventOptions;
 };
 
-export type LocalTransportConfiguration = {};
+export type LocalTransportConfiguration = {
+    x?: number;
+};
