@@ -1,6 +1,6 @@
 import { GenericError, Transport } from "@clean-arc/common";
 import { EventConsumerType, logger } from "@clean-arc/core";
-import { AMQPChannel, AMQPClient, AMQPQueue } from "@cloudamqp/amqp-client";
+import { AMQPClient, AMQPQueue } from "@cloudamqp/amqp-client";
 import { AMQPBaseClient } from "@cloudamqp/amqp-client/types/amqp-base-client";
 import {
     RabbitMqBatchOptions,
@@ -29,7 +29,7 @@ export class RabbitMqTransport extends Transport<
     private queueMap: Map<string, QueueBind>;
 
     async bindConsumer(handler: EventConsumerType): Promise<void> {
-        let consumerName = `rabbitmq consumer  ${handler.options?.consumerName}.${handler.propertyKey}(...) `;
+        const consumerName = `rabbitmq consumer  ${handler.options?.consumerName}.${handler.propertyKey}(...) `;
         if (!this.localActiveConsumersMap.get(handler.eventName)) {
             log.info(
                 `${consumerName} - on queue ${handler.eventName} is not active`
@@ -135,7 +135,7 @@ export class RabbitMqTransport extends Transport<
     private setupQueues(queues: RabbitMqQueue[]) {
         this.queueMap = new Map();
         return queues.map(async (appQueue) => {
-            let active = this.localActiveConsumersMap.get(appQueue.name);
+            const active = this.localActiveConsumersMap.get(appQueue.name);
             if (!active) {
                 log.debug(
                     `Skiping creation of channel and queue(${appQueue.name}) because local consumer is inactive with value ${active}`

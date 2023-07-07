@@ -2,3 +2,4 @@ node_modules
 dist
 .vscode
 .env
+lerna-debug.log

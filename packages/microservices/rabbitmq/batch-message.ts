@@ -81,7 +81,8 @@ export class RabbitMqBatchMessage<BodyType = any> {
 
     public async nackAll() {
         const promises: Promise<void>[] = [];
-        this.messagesMaps.shift()?.forEach((msg, key) => {
+
+        this.currentBatchMap.forEach((msg) => {
             promises.push(msg.nack());
         });
 
@@ -90,10 +91,10 @@ export class RabbitMqBatchMessage<BodyType = any> {
 
     public async ackAll() {
         const promises: Promise<void>[] = [];
-        this.messagesMaps.shift()?.forEach((msg, key) => {
+
+        this.currentBatchMap.forEach((msg) => {
             promises.push(msg.ack());
         });
-
         return Promise.all(promises);
     }
 

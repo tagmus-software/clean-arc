@@ -1,6 +1,0 @@
-55 error Error: Command failed with exit code 128: git push --follow-tags --no-verify --atomic origin main
-55 error remote: Support for password authentication was removed on August 13, 2021.
-55 error remote: Please see https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls for information on currently recommended modes of authentication.
-55 error fatal: Authentication failed for 'https://github.com/tagmus-software/clean-arc.git/'
-55 error     at makeError (/home/kevin/.nvm/versions/node/v16.20.1/lib/node_modules/lerna/node_modules/execa/lib/error.js:59:11)
-55 error     at handlePromise (/home/kevin/.nvm/versions/node/v16.20.1/lib/node_modules/lerna/node_modules/execa/index.js:114:26)
