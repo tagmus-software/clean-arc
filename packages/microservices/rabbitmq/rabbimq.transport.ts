@@ -176,12 +176,15 @@ export class RabbitMqTransport extends Transport<
             if (autoTransaction) await context.commitTransaction();
         } catch (error) {
             if (autoTransaction) await context.rollbackTransaction();
+            let reason = "ERR_RABBITMQ_CONSUMER";
             if (error instanceof GenericError) {
-                log.error(error.getBody(), error.statusCode as string);
+                reason = String(error.statusCode);
+                log.error(error.getBody(), reason);
             } else {
-                log.error(error, "ERR_RABBITMQ_CONSUMER");
+                log.error(error, reason);
             }
-            throw error;
+            await this.connection.close(reason);
+            process.abort();
         }
     }
 }
