@@ -6,7 +6,7 @@
     "private": true,
     "scripts": {
         "test": "jest",
-        "build": "rimraf ./dist && tsc --project tsconfig.json",
+        "build": "rimraf ./dist && tsc --project tsconfig.build.json",
         "lint": "eslint . --ext .ts",
         "publish-ci": "lerna publish from-package -y --force-publish=* ",
         "publish:common": "npm run build && cd ./dist/common && npm publish --access public",
