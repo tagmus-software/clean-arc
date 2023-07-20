@@ -18,12 +18,6 @@
         },
         "strictPropertyInitialization": false
     },
-    "exclude": [
-        "node_modules",
-        "./dist",
-        "./**/__mocks__",
-        "./**/tests",
-        "./**/test"
-    ],
-    "include": ["packages/**/*.ts", "packages/**/*.json"]
+    "exclude": ["node_modules", "./dist"],
+    "include": ["packages/**/*.ts", "packages/**/*.json", "test/**/*.ts"]
 }

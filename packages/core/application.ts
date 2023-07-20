@@ -25,8 +25,6 @@ export abstract class Application {
         }
     }
 
-    abstract listen(port?: number): Promise<void>;
-
     private initDatabasesConnection(
         databases: ApplicationConfiguration["databases"] = []
     ) {

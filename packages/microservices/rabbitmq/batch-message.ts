@@ -1,12 +1,6 @@
-import { AMQPMessage } from "@cloudamqp/amqp-client";
-import { nanoid } from "nanoid";
 import { GenericError } from "@clean-arc/common";
-import {
-    RabbitMqBatchOptions,
-    RabbitMqContext,
-    RabbitMqMessage,
-    RabbitMqMessageObj,
-} from "./";
+import { RabbitMqBatchOptions, RabbitMqMessage, RabbitMqMessageObj } from "./";
+import { logger } from "@clean-arc/core";
 
 type BatchOptions = {
     queueName: string;
@@ -54,9 +48,7 @@ export class RabbitMqBatchMessage<BodyType = any> {
 
     public accumulateMessage(msg: RabbitMqMessage<BodyType>) {
         clearTimeout(this.timeout);
-        if (this.lastBatchMap.size <= this.batchSize) {
-            this.lastBatchMap.set(msg.deliveryTag, msg);
-        }
+        this.lastBatchMap.set(msg.deliveryTag, msg);
     }
 
     public isBatchReady(): boolean {
@@ -71,18 +63,23 @@ export class RabbitMqBatchMessage<BodyType = any> {
         return msgs;
     }
 
-    public async ack(deliveryTag: number) {
+    public async ackOne(deliveryTag: number) {
         await this.currentBatchMap.get(deliveryTag)?.ack();
     }
 
-    public async nack(deliveryTag: number) {
+    public async nackOne(deliveryTag: number) {
         await this.currentBatchMap.get(deliveryTag)?.nack();
     }
 
     public async nackAll() {
         const promises: Promise<void>[] = [];
+        const messagesMap = this.messagesMaps.shift();
 
-        this.currentBatchMap.forEach((msg) => {
+        if (!messagesMap) {
+            logger.error("There is no message in the batch queue");
+            return;
+        }
+        messagesMap.forEach((msg) => {
             promises.push(msg.nack());
         });
 
@@ -90,9 +87,15 @@ export class RabbitMqBatchMessage<BodyType = any> {
     }
 
     public async ackAll() {
+        const messagesMap = this.messagesMaps.shift();
+        if (!messagesMap) {
+            logger.error("There is no message in the batch queue");
+            return;
+        }
+
         const promises: Promise<void>[] = [];
 
-        this.currentBatchMap.forEach((msg) => {
+        messagesMap.forEach((msg) => {
             promises.push(msg.ack());
         });
         return Promise.all(promises);
