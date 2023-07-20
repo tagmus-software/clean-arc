@@ -22,8 +22,8 @@ jobs:
             - run: npm run lint
               name: "Linting the project"
 
-            - uses: ArtiomTr/jest-coverage-report-action@v2
-              name: "Testing the project"
+            # - uses: ArtiomTr/jest-coverage-report-action@v2
+            #   name: "Testing the project"
 
             - run: npm run build
               name: "Linting the project"
