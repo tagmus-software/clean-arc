@@ -6,7 +6,7 @@ export function MessagePattern(
     extraOptions: { isActive?: boolean } = {}
 ) {
     return (
-        target: any,
+        target: object,
         propertyKey: string,
         descriptor: PropertyDescriptor
     ) => {
@@ -30,7 +30,7 @@ export function EventConsumer(options: EventOptions = { isActive: true }) {
     if (!options.connectionName) {
         options.connectionName = "default";
     }
-    return <T extends { new (...args: any[]): {} }>(ctr: T) => {
+    return <T extends { new (...args: unknown[]): unknown }>(ctr: T) => {
         if (!options.consumerName) {
             options.consumerName = ctr.name;
         }

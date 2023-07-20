@@ -9,7 +9,14 @@ describe("application", () => {
         test.todo("should call build logger with the default options");
     });
 
-    describe("setupDatabase", () => {});
+    describe("setupDatabase", () => {
+        test.todo("should setup the test instance properly");
+    });
 
-    describe("initDatabasesConnection", () => {});
+    describe("initDatabasesConnection", () => {
+        test.todo("should initiate all the database connections");
+        test.todo(
+            "should throw an error if one of the database connections failed"
+        );
+    });
 });
