@@ -63,7 +63,13 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
                 `Message is not a batch, please, use the method .getFullMessage() or getJsonMessage() to handle your message`
             );
         }
-        return structuredClone(this.context.msg) as RabbitMqBatchMessage<T>;
+        const msg: any = {};
+
+        for (const key in this.context.msg) {
+            msg[key] = (this.context.msg as any)[key];
+        }
+
+        return msg as RabbitMqBatchMessage<T>;
     }
 
     public isBatchMessage() {
