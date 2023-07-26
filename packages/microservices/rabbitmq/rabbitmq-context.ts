@@ -64,7 +64,10 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
             );
         }
 
-        return this.context.msg as RabbitMqBatchMessage<T>;
+        return {
+            ...this.context.msg,
+            isDispatched: true,
+        } as RabbitMqBatchMessage<T>;
     }
 
     public isBatchMessage() {

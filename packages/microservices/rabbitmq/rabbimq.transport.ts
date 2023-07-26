@@ -72,7 +72,6 @@ export class RabbitMqTransport extends Transport<
                     msg: batchMessage,
                     channel,
                 });
-
                 batchMessage.accumulateMessage(msg);
 
                 if (batchMessage.isBatchReady()) {
