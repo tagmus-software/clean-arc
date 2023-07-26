@@ -4,6 +4,7 @@ import { AMQPProperties } from "@cloudamqp/amqp-client";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
 import { GenericError } from "@clean-arc/common";
+import { cloneDeep } from "lodash";
 
 type PublishMessageOnQueueParams = {
     data: any;
@@ -63,13 +64,7 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
                 `Message is not a batch, please, use the method .getFullMessage() or getJsonMessage() to handle your message`
             );
         }
-        const msg: any = {};
-
-        for (const key in this.context.msg) {
-            msg[key] = (this.context.msg as any)[key];
-        }
-
-        return msg as RabbitMqBatchMessage<T>;
+        return cloneDeep(this.context.msg) as RabbitMqBatchMessage<T>;
     }
 
     public isBatchMessage() {

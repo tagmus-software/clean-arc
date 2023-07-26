@@ -1,6 +1,6 @@
 {
     "name": "@clean-arc/rabbitmq",
-    "version": "2.0.7",
+    "version": "2.0.8",
     "description": "RabbitMQ Integration for the framework @clean-arc",
     "scripts": {
         "test": "npm test"
@@ -20,7 +20,8 @@
         "@clean-arc/core": "*"
     },
     "dependencies": {
-        "@cloudamqp/amqp-client": "^2.1.1"
+        "@cloudamqp/amqp-client": "^2.1.1",
+        "lodash": "^4.17.21"
     },
     "publishConfig": {
         "directory": "../../../dist/microservices/rabbitmq"
