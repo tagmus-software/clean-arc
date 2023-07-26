@@ -1,6 +1,6 @@
 import { EventContext } from "@clean-arc/core";
 import { RabbitMqContextParams } from "./types";
-import { AMQPMessage, AMQPProperties } from "@cloudamqp/amqp-client";
+import { AMQPProperties } from "@cloudamqp/amqp-client";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
 import { GenericError } from "@clean-arc/common";
@@ -63,11 +63,7 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
                 `Message is not a batch, please, use the method .getFullMessage() or getJsonMessage() to handle your message`
             );
         }
-
-        return {
-            ...this.context.msg,
-            isDispatched: true,
-        } as RabbitMqBatchMessage<T>;
+        return structuredClone(this.context.msg) as RabbitMqBatchMessage<T>;
     }
 
     public isBatchMessage() {

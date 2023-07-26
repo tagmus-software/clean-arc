@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ES2018",
+        "target": "ES2022",
         "lib": ["es5", "es6", "dom"],
         "resolveJsonModule": true,
         "module": "CommonJS",
