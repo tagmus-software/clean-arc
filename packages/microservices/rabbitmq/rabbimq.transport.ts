@@ -60,6 +60,7 @@ export class RabbitMqTransport extends Transport<
         }
 
         const autoTransaction = appQueue.transactionAutoCommit;
+
         const channel = await this.connection.channel(queue.channel.id);
         if (appQueue.transactionMode) {
             logger.debug("Transaction mode activated");
@@ -73,12 +74,13 @@ export class RabbitMqTransport extends Transport<
                 // batchMessage.accumulateMessage(msg);
                 batchManager.incrementBatchMessage(msg, handler.eventName);
 
+                context = new RabbitMqContext({
+                    queue,
+                    msg: batchManager.getAndRemoveBatch(),
+                    channel,
+                });
+
                 if (batchManager.hasBatchReady()) {
-                    context = new RabbitMqContext({
-                        queue,
-                        msg: batchManager.getAndRemoveBatch(),
-                        channel,
-                    });
                     return await batchManager.dispatch(() =>
                         this.handleCallbackConsumer({
                             handler,
