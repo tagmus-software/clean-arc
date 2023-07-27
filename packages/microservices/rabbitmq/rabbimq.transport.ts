@@ -170,7 +170,7 @@ export class RabbitMqTransport extends Transport<
     private async handleCallbackConsumer({
         handler,
         context,
-        autoTransaction = true,
+        autoTransaction = false,
     }: HandlerCallbackConsumerParams) {
         try {
             await handler.callback.apply(handler.target, [context]);
