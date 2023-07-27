@@ -4,7 +4,6 @@ import { AMQPProperties } from "@cloudamqp/amqp-client";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
 import { GenericError } from "@clean-arc/common";
-import { cloneDeep } from "lodash";
 
 type PublishMessageOnQueueParams = {
     data: any;
