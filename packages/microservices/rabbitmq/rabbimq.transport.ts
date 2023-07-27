@@ -1,6 +1,6 @@
 import { GenericError, Transport } from "@clean-arc/common";
 import { EventConsumerType, logger } from "@clean-arc/core";
-import { AMQPClient, AMQPQueue } from "@cloudamqp/amqp-client";
+import { AMQPChannel, AMQPClient, AMQPQueue } from "@cloudamqp/amqp-client";
 import { AMQPBaseClient } from "@cloudamqp/amqp-client/types/amqp-base-client";
 import {
     RabbitMqBatchOptions,
@@ -14,7 +14,10 @@ import { BatchManager } from "./batch-manager";
 
 type HandlerCallbackConsumerParams = {
     handler: EventConsumerType;
-    context: RabbitMqContext;
+    msg: RabbitMqBatchMessage | RabbitMqMessage;
+    queue: AMQPQueue;
+    channel: AMQPChannel;
+    batchManager: BatchManager;
     autoTransaction?: boolean;
 };
 
@@ -63,52 +66,48 @@ export class RabbitMqTransport extends Transport<
 
         const channel = await this.connection.channel(queue.channel.id);
         if (appQueue.transactionMode) {
-            logger.debug("Transaction mode activated");
+            logger.info("Transaction mode activated");
             await channel.txSelect();
         }
         await queue.subscribe(appQueue.consumeParams, async (_msg) => {
             const msg = new RabbitMqMessage(_msg);
 
-            let context: RabbitMqContext;
             if (batchManager) {
                 // batchMessage.accumulateMessage(msg);
                 batchManager.incrementBatchMessage(msg, handler.eventName);
-
-                context = new RabbitMqContext({
-                    queue,
-                    msg: batchManager.getAndRemoveBatch(),
-                    channel,
-                });
 
                 if (batchManager.hasBatchReady()) {
                     return await batchManager.dispatch(() =>
                         this.handleCallbackConsumer({
                             handler,
-                            context,
                             autoTransaction,
+                            queue,
+                            channel,
+                            msg,
+                            batchManager,
                         })
                     );
                 }
 
                 return await batchManager.timeoutDispatch(() =>
                     this.handleCallbackConsumer({
-                        context,
                         handler,
                         autoTransaction,
+                        queue,
+                        channel,
+                        msg,
+                        batchManager,
                     })
                 );
             }
 
-            context = new RabbitMqContext({
-                msg,
-                queue,
-                channel,
-            });
-
             return await this.handleCallbackConsumer({
                 handler,
-                context,
                 autoTransaction,
+                queue,
+                channel,
+                msg,
+                batchManager,
             });
         });
     }
@@ -171,9 +170,26 @@ export class RabbitMqTransport extends Transport<
 
     private async handleCallbackConsumer({
         handler,
-        context,
+        msg,
+        queue,
+        channel,
+        batchManager,
         autoTransaction = false,
     }: HandlerCallbackConsumerParams) {
+        let context: RabbitMqContext = new RabbitMqContext({
+            queue,
+            msg,
+            channel,
+        });
+
+        if (batchManager) {
+            context = new RabbitMqContext({
+                msg: batchManager.getAndRemoveBatch(),
+                queue,
+                channel,
+            });
+        }
+
         try {
             await handler.callback.apply(handler.target, [context]);
 
