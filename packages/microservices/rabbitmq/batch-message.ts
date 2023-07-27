@@ -1,19 +1,12 @@
 import { GenericError } from "@clean-arc/common";
-import { RabbitMqBatchOptions, RabbitMqMessage, RabbitMqMessageObj } from "./";
-import { logger } from "@clean-arc/core";
-
-type BatchOptions = {
-    queueName: string;
-} & RabbitMqBatchOptions;
+import { BatchOptions, RabbitMqMessage, RabbitMqMessageObj } from "./";
 
 export class RabbitMqBatchMessage<BodyType = any> {
-    protected messagesMaps: Map<number, RabbitMqMessage<BodyType>>[];
+    protected messageMap: Map<number, RabbitMqMessage<BodyType>>;
 
     protected batchSize: BatchOptions["batchSize"];
-    protected batchTimeWait: BatchOptions["batchTimeWait"];
     protected enabled: BatchOptions["enabled"];
 
-    protected timeout: NodeJS.Timeout;
     public isDispatched: boolean;
 
     constructor(options: BatchOptions) {
@@ -23,91 +16,49 @@ export class RabbitMqBatchMessage<BodyType = any> {
                 `Batch size should be informed for queue "${options.queueName}"`
             );
         }
-
-        this.batchTimeWait = options.batchTimeWait || 500;
         this.enabled = options.enabled || true;
-        this.messagesMaps = [];
-    }
-
-    private get lastBatchMap() {
-        if (!this.messagesMaps.length) {
-            this.messagesMaps.push(new Map());
-        }
-        const lastMap = this.messagesMaps[this.messagesMaps.length - 1];
-
-        if (lastMap.size >= this.batchSize) {
-            this.messagesMaps.push(new Map());
-        }
-
-        return this.messagesMaps[this.messagesMaps.length - 1];
-    }
-
-    private get currentBatchMap() {
-        return this.messagesMaps[0];
+        this.messageMap = new Map();
     }
 
     public accumulateMessage(msg: RabbitMqMessage<BodyType>) {
-        clearTimeout(this.timeout);
-        this.lastBatchMap.set(msg.deliveryTag, msg);
+        this.messageMap.set(msg.deliveryTag, msg);
     }
 
     public isBatchReady(): boolean {
-        return this.currentBatchMap.size >= this.batchSize;
+        return this.messageMap.size >= this.batchSize;
     }
 
     public getMessagesJson() {
         const msgs: RabbitMqMessageObj<BodyType>[] = [];
-        this.currentBatchMap.forEach((msg) => {
+        this.messageMap.forEach((msg) => {
             msgs.push(msg.toJson());
         });
         return msgs;
     }
 
     public async ackOne(deliveryTag: number) {
-        await this.currentBatchMap.get(deliveryTag)?.ack();
+        await this.messageMap.get(deliveryTag)?.ack();
     }
 
     public async nackOne(deliveryTag: number) {
-        await this.currentBatchMap.get(deliveryTag)?.nack();
+        await this.messageMap.get(deliveryTag)?.nack();
     }
 
     public async nackAll() {
         const promises: Promise<void>[] = [];
-        const messagesMap = this.messagesMaps.shift();
 
-        if (!messagesMap) {
-            logger.error("There is no message in the batch queue");
-            return;
-        }
-        messagesMap.forEach((msg) => {
+        this.messageMap.forEach((msg) => {
             promises.push(msg.nack());
         });
 
-        return Promise.all(promises);
+        await Promise.all(promises);
     }
 
     public async ackAll() {
-        const messagesMap = this.messagesMaps.shift();
-        if (!messagesMap) {
-            logger.error("There is no message in the batch queue");
-            return;
-        }
-
         const promises: Promise<void>[] = [];
-
-        messagesMap.forEach((msg) => {
+        this.messageMap.forEach((msg) => {
             promises.push(msg.ack());
         });
-        return Promise.all(promises);
-    }
-
-    public async dispatch(callback: () => Promise<void>) {
-        callback();
-    }
-    public async timeoutDispatch(callback: () => Promise<void>) {
-        clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-            this.dispatch(callback);
-        }, this.batchTimeWait);
+        await Promise.all(promises);
     }
 }

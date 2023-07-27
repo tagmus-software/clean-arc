@@ -10,6 +10,7 @@ import {
 import { RabbitMqContext } from "./rabbitmq-context";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
+import { BatchManager } from "./batch-manager";
 
 type HandlerCallbackConsumerParams = {
     handler: EventConsumerType;
@@ -35,8 +36,10 @@ export class RabbitMqTransport extends Transport<
             );
             return;
         }
-        const { queue, appQueue } =
-            (this.queueMap.get(handler.eventName) as QueueBind) || {};
+
+        const { queue, appQueue } = this.queueMap.get(
+            handler.eventName
+        ) as QueueBind;
 
         if (!queue) {
             throw new GenericError(
@@ -49,33 +52,34 @@ export class RabbitMqTransport extends Transport<
             `Starting consuming queue "${handler.eventName}" in the ${consumerName}`
         );
 
-        let batchMessage: RabbitMqBatchMessage;
+        let batchManager: BatchManager;
         if (appQueue.batch && appQueue.batch.enabled) {
-            batchMessage = new RabbitMqBatchMessage({
-                ...(appQueue.batch as RabbitMqBatchOptions),
-                queueName: handler.eventName,
-            });
+            batchManager = new BatchManager(
+                appQueue.batch as RabbitMqBatchOptions
+            );
         }
 
         const autoTransaction = appQueue.transactionAutoCommit;
         const channel = await this.connection.channel(queue.channel.id);
         if (appQueue.transactionMode) {
+            logger.debug("Transaction mode activated");
             await channel.txSelect();
         }
         await queue.subscribe(appQueue.consumeParams, async (_msg) => {
             const msg = new RabbitMqMessage(_msg);
 
             let context: RabbitMqContext;
-            if (appQueue.batch && appQueue.batch.enabled) {
-                context = new RabbitMqContext({
-                    queue,
-                    msg: batchMessage,
-                    channel,
-                });
-                batchMessage.accumulateMessage(msg);
+            if (batchManager) {
+                // batchMessage.accumulateMessage(msg);
+                batchManager.incrementBatchMessage(msg, handler.eventName);
 
-                if (batchMessage.isBatchReady()) {
-                    return batchMessage.dispatch(() =>
+                if (batchManager.hasBatchReady()) {
+                    context = new RabbitMqContext({
+                        queue,
+                        msg: batchManager.getAndRemoveBatch(),
+                        channel,
+                    });
+                    return await batchManager.dispatch(() =>
                         this.handleCallbackConsumer({
                             handler,
                             context,
@@ -84,7 +88,7 @@ export class RabbitMqTransport extends Transport<
                     );
                 }
 
-                return batchMessage.timeoutDispatch(() =>
+                return await batchManager.timeoutDispatch(() =>
                     this.handleCallbackConsumer({
                         context,
                         handler,
@@ -99,7 +103,7 @@ export class RabbitMqTransport extends Transport<
                 channel,
             });
 
-            return this.handleCallbackConsumer({
+            return await this.handleCallbackConsumer({
                 handler,
                 context,
                 autoTransaction,
@@ -136,7 +140,7 @@ export class RabbitMqTransport extends Transport<
             const active = this.localActiveConsumersMap.get(appQueue.name);
             if (!active) {
                 logger.debug(
-                    `Skiping creation of channel and queue(${appQueue.name}) because local consumer is inactive with value ${active}`
+                    `Skipping creation of channel and queue(${appQueue.name}) because local consumer is inactive with value ${active}`
                 );
                 return;
             }
@@ -171,9 +175,15 @@ export class RabbitMqTransport extends Transport<
         try {
             await handler.callback.apply(handler.target, [context]);
 
-            if (autoTransaction) await context.commitTransaction();
+            if (autoTransaction) {
+                logger.debug("Committing transaction");
+                await context.commitTransaction();
+            }
         } catch (error) {
-            if (autoTransaction) await context.rollbackTransaction();
+            if (autoTransaction) {
+                logger.debug("Rolling back transaction");
+                await context.rollbackTransaction();
+            }
             let reason = "ERR_RABBITMQ_CONSUMER";
             if (error instanceof GenericError) {
                 reason = String(error.statusCode);
@@ -182,7 +192,6 @@ export class RabbitMqTransport extends Transport<
                 logger.error(error, reason);
             }
             await this.connection.close(reason);
-            process.abort();
         }
     }
 }

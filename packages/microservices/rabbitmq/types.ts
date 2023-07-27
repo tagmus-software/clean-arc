@@ -42,3 +42,7 @@ export type RabbitMqContextParams = {
     queue: AMQPQueue;
     channel: AMQPChannel;
 };
+
+export type BatchOptions = {
+    queueName: string;
+} & RabbitMqBatchOptions;

@@ -64,7 +64,7 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
                 `Message is not a batch, please, use the method .getFullMessage() or getJsonMessage() to handle your message`
             );
         }
-        return cloneDeep(this.context.msg) as RabbitMqBatchMessage<T>;
+        return this.context.msg as RabbitMqBatchMessage<T>;
     }
 
     public isBatchMessage() {
