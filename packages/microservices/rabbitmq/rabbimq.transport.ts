@@ -1,4 +1,4 @@
-import { GenericError, Transport } from "@clean-arc/common";
+import { GenericError } from "@clean-arc/common";
 import { EventConsumerType, logger } from "@clean-arc/core";
 import { AMQPChannel, AMQPClient, AMQPQueue } from "@cloudamqp/amqp-client";
 import { AMQPBaseClient } from "@cloudamqp/amqp-client/types/amqp-base-client";
@@ -11,6 +11,7 @@ import { RabbitMqContext } from "./rabbitmq-context";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
 import { BatchManager } from "./batch-manager";
+import { Transport } from "@clean-arc/core/microservices/transport";
 
 type HandlerCallbackConsumerParams = {
     handler: EventConsumerType;

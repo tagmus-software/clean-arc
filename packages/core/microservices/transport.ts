@@ -4,13 +4,23 @@ export abstract class Transport<T = unknown, C = any> {
     public connectionName: string;
 
     protected configuration: T;
-    protected connection: C;
+
+    protected _connection: C;
 
     protected localActiveConsumersMap: Map<string, boolean>;
     constructor(configuration: T) {
         this.configuration = configuration;
         this.localActiveConsumersMap = new Map();
     }
+
+    protected get connection() {
+        return this._connection;
+    }
+
+    protected set connection(connection) {
+        this._connection = connection;
+    }
+
     get isNotConnected() {
         return !this.connection;
     }
