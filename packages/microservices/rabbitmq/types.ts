@@ -21,7 +21,10 @@ export type RabbitMqQueue = {
     exclusive?: boolean;
     passive?: boolean;
     channelId?: number;
-    publishChannelId?: number;
+    publishChannel?: {
+        active: boolean;
+        id?: number;
+    };
 
     batch?: RabbitMqBatchOptions;
 

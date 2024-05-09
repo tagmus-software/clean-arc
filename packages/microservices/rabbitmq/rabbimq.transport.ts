@@ -26,7 +26,6 @@ type HandlerCallbackConsumerParams = {
 type QueueBind = {
     appQueue: RabbitMqQueue;
     queue: AMQPQueue;
-    publishChannel?: AMQPChannel;
 };
 export class RabbitMqTransport extends Transport<
     RabbitMqConfiguration,
@@ -43,7 +42,7 @@ export class RabbitMqTransport extends Transport<
             return;
         }
 
-        const { queue, appQueue, publishChannel } = this.queueMap.get(
+        const { queue, appQueue } = this.queueMap.get(
             handler.eventName
         ) as QueueBind;
 
@@ -57,7 +56,6 @@ export class RabbitMqTransport extends Transport<
         logger.info(
             `Starting consuming queue "${handler.eventName}" in the ${consumerName}`
         );
-
         let batchManager: BatchManager;
         if (appQueue.batch && appQueue.batch.enabled) {
             batchManager = new BatchManager(
@@ -67,6 +65,15 @@ export class RabbitMqTransport extends Transport<
 
         const autoTransaction = appQueue.transactionAutoCommit;
         const channel = await this.connection.channel(queue.channel.id);
+
+        let publishChannel: AMQPChannel;
+
+        if (appQueue.publishChannel?.active) {
+            publishChannel = await this.connection.channel(
+                appQueue.publishChannel.id
+            );
+        }
+
         if (appQueue.transactionMode) {
             logger.info("Transaction mode activated");
             await channel.txSelect();
@@ -151,19 +158,7 @@ export class RabbitMqTransport extends Transport<
                 return;
             }
 
-            const [publishChannel, channel] = await Promise.all(
-                (() => {
-                    const channel: Promise<AMQPChannel>[] = [];
-
-                    channel.push(this.connection.channel(appQueue.channelId));
-                    if (appQueue.publishChannelId) {
-                        channel.push(
-                            this.connection.channel(appQueue.publishChannelId)
-                        );
-                    }
-                    return channel;
-                })()
-            );
+            const channel = await this.connection.channel(appQueue.channelId);
 
             let prefetch = appQueue.messagesInParallel || 15;
             if (appQueue.batch) {
@@ -181,7 +176,6 @@ export class RabbitMqTransport extends Transport<
             this.queueMap.set(appQueue.name, {
                 queue: amqpQueue,
                 appQueue,
-                publishChannel,
             });
         });
     }
