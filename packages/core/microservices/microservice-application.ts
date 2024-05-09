@@ -1,9 +1,10 @@
-import { GenericError, Transport } from "@clean-arc/common";
+import { GenericError } from "@clean-arc/common";
 import { Application, ApplicationConfiguration } from "../application";
 import { EventConsumerType, LocalTransport, consumersMap } from "../event";
 import { resolve } from "path";
 import fs from "fs/promises";
 import { logger } from "../logger";
+import { Transport } from "./transport";
 
 export type MicroserviceConfiguration = {
     consumers?: EventConsumerType[] | string[] | string;

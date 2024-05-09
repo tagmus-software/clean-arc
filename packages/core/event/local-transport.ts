@@ -1,4 +1,4 @@
-import { Transport } from "@clean-arc/common";
+import { Transport } from "../microservices";
 import { EventConsumerType, LocalTransportConfiguration } from "./";
 
 export class LocalTransport extends Transport<LocalTransportConfiguration> {
