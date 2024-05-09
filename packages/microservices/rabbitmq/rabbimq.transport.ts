@@ -18,6 +18,7 @@ type HandlerCallbackConsumerParams = {
     msg: RabbitMqBatchMessage | RabbitMqMessage;
     queue: AMQPQueue;
     channel: AMQPChannel;
+    publishChannel?: AMQPChannel;
     batchManager: BatchManager;
     autoTransaction?: boolean;
 };
@@ -25,6 +26,7 @@ type HandlerCallbackConsumerParams = {
 type QueueBind = {
     appQueue: RabbitMqQueue;
     queue: AMQPQueue;
+    publishChannel?: AMQPChannel;
 };
 export class RabbitMqTransport extends Transport<
     RabbitMqConfiguration,
@@ -41,7 +43,7 @@ export class RabbitMqTransport extends Transport<
             return;
         }
 
-        const { queue, appQueue } = this.queueMap.get(
+        const { queue, appQueue, publishChannel } = this.queueMap.get(
             handler.eventName
         ) as QueueBind;
 
@@ -64,7 +66,6 @@ export class RabbitMqTransport extends Transport<
         }
 
         const autoTransaction = appQueue.transactionAutoCommit;
-
         const channel = await this.connection.channel(queue.channel.id);
         if (appQueue.transactionMode) {
             logger.info("Transaction mode activated");
@@ -86,6 +87,7 @@ export class RabbitMqTransport extends Transport<
                             channel,
                             msg,
                             batchManager,
+                            publishChannel,
                         })
                     );
                 }
@@ -98,6 +100,7 @@ export class RabbitMqTransport extends Transport<
                         channel,
                         msg,
                         batchManager,
+                        publishChannel,
                     })
                 );
             }
@@ -109,6 +112,7 @@ export class RabbitMqTransport extends Transport<
                 channel,
                 msg,
                 batchManager,
+                publishChannel,
             });
         });
     }
@@ -147,7 +151,19 @@ export class RabbitMqTransport extends Transport<
                 return;
             }
 
-            const channel = await this.connection.channel(appQueue.channelId);
+            const [publishChannel, channel] = await Promise.all(
+                (() => {
+                    const channel: Promise<AMQPChannel>[] = [];
+
+                    channel.push(this.connection.channel(appQueue.channelId));
+                    if (appQueue.publishChannelId) {
+                        channel.push(
+                            this.connection.channel(appQueue.publishChannelId)
+                        );
+                    }
+                    return channel;
+                })()
+            );
 
             let prefetch = appQueue.messagesInParallel || 15;
             if (appQueue.batch) {
@@ -165,6 +181,7 @@ export class RabbitMqTransport extends Transport<
             this.queueMap.set(appQueue.name, {
                 queue: amqpQueue,
                 appQueue,
+                publishChannel,
             });
         });
     }
@@ -175,6 +192,7 @@ export class RabbitMqTransport extends Transport<
         queue,
         channel,
         batchManager,
+        publishChannel,
         autoTransaction = false,
     }: HandlerCallbackConsumerParams) {
         let context: RabbitMqContext = new RabbitMqContext({
@@ -190,7 +208,9 @@ export class RabbitMqTransport extends Transport<
                 channel,
             });
         }
-
+        if (publishChannel) {
+            context.setPublishChannel(publishChannel);
+        }
         try {
             await handler.callback.apply(handler.target, [context]);
 

@@ -48,15 +48,8 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
         );
     }
 
-    async createChannelPublishChannel(channelId?: number) {
-        if (
-            !this.publishChannel ||
-            (this.publishChannel && this.publishChannel.closed)
-        ) {
-            this.publishChannel = await this.publishChannel.connection.channel(
-                channelId
-            );
-        }
+    async setPublishChannel(channel: AMQPChannel) {
+        this.publishChannel = channel;
     }
 
     async closeChannel() {
