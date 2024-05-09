@@ -1,6 +1,6 @@
 import { EventContext } from "@clean-arc/core";
 import { RabbitMqContextParams } from "./types";
-import { AMQPProperties } from "@cloudamqp/amqp-client";
+import { AMQPChannel, AMQPProperties } from "@cloudamqp/amqp-client";
 import { RabbitMqBatchMessage } from "./batch-message";
 import { RabbitMqMessage } from "./message";
 import { GenericError } from "@clean-arc/common";
@@ -14,6 +14,14 @@ type PublishMessageOnQueueParams = {
 };
 export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
     public isTransactionModeActive: boolean;
+    private publishChannel: AMQPChannel;
+
+    get channel() {
+        if (this.publishChannel && !this.publishChannel.closed) {
+            return this.publishChannel;
+        }
+        return this.context.channel;
+    }
 
     async publishMessage(data: any) {
         await this.context.queue.publish(JSON.stringify(data));
@@ -30,7 +38,8 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
         if (!topic) {
             topic = "";
         }
-        return this.context.channel.basicPublish(
+
+        return this.channel.basicPublish(
             topic,
             queue,
             JSON.stringify(data),
@@ -38,6 +47,18 @@ export class RabbitMqContext extends EventContext<RabbitMqContextParams> {
             mandatory
         );
     }
+
+    async createChannelPublishChannel(channelId?: number) {
+        if (
+            !this.publishChannel ||
+            (this.publishChannel && this.publishChannel.closed)
+        ) {
+            this.publishChannel = await this.publishChannel.connection.channel(
+                channelId
+            );
+        }
+    }
+
     async closeChannel() {
         await this.context.queue.channel.close();
     }
